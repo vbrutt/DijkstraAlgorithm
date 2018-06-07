@@ -7,49 +7,51 @@ import org.apache.commons.csv.*;
 
 public class Algorithmus {
 
-	private List<Kante> kanten = new ArrayList<>();
-	private List<Knoten> knoten = new ArrayList<>();
-	private List<Knoten> unvisitedKnoten = new ArrayList<>();
-	private List<Knoten> visitedKnoten = new ArrayList<>();
-	private Map<String, Knoten> alleKnoten = new HashMap<>();
+	private List<Edge> edges = new ArrayList<>();
+	private List<Node> nodes = new ArrayList<>();
+	private List<Node> unvisitedNodes = new ArrayList<>();
+	private List<Node> visitedNodes = new ArrayList<>();
+	private Map<Node, Node> predecessor = new HashMap<>();
+	private Map<String, Node> allenode = new HashMap<>();
 
-	private Knoten getKnoten(String id) {
-		Knoten knoten = alleKnoten.get(id);
-		if (knoten == null) {
-			knoten = new Knoten(id);
-			alleKnoten.put(id, knoten);
+	private Node getNode(String id) {
+		Node node = allenode.get(id);
+		if (node == null) {
+			node = new Node(id);
+			allenode.put(id, node);
 		}
-		return knoten;
+		return node;
 	}
 
 	/**
-	 * initializes the class, by reading the csv file and setting the edges (Kanten)
-	 * and nodes
+	 * initializes the class, by reading the csv file and setting the edges and
+	 * nodes
 	 * 
 	 * @param source
+	 *            from the csv-file
 	 */
 	public Algorithmus(String source) {
 		CSVFormat format = CSVFormat.EXCEL.withHeader().withDelimiter(';');
-		List<Kante> kantenList = new ArrayList<>();
-		List<Knoten> knotenList = new ArrayList<>();
-		Set<Knoten> knotenSet = new HashSet<>();
+		List<Edge> edgeList = new ArrayList<>();
+		List<Node> nodeList = new ArrayList<>();
+		Set<Node> nodeSet = new HashSet<>();
 
 		try (FileReader reader = new FileReader(source)) {
 			CSVParser parser = new CSVParser(reader, format);
 			for (CSVRecord record : parser.getRecords()) {
-				Knoten knoten1 = getKnoten(record.get("von"));
-				Knoten knoten2 = getKnoten(record.get("bis"));
-				Kante kante = new Kante(knoten1, knoten2, record.get("id"), Double.parseDouble(record.get("Abstand")));
+				Node node1 = getNode(record.get("von"));
+				Node node2 = getNode(record.get("bis"));
+				Edge kante = new Edge(node1, node2, record.get("id"), Double.parseDouble(record.get("Abstand")));
 
-				knotenSet.add(knoten1);
-				knotenSet.add(knoten2);
-				kantenList.add(kante);
+				nodeSet.add(node1);
+				nodeSet.add(node2);
+				edgeList.add(kante);
 			}
-			knotenList.addAll(knotenSet);
+			nodeList.addAll(nodeSet);
 
-			kantenList = setKanten(kantenList, knotenList);
-			this.kanten = kantenList;
-			this.knoten = knotenList;
+			edgeList = setEdges(edgeList, nodeList);
+			this.edges = edgeList;
+			this.nodes = nodeList;
 			parser.close();
 			reader.close();
 
@@ -57,192 +59,211 @@ public class Algorithmus {
 			e.printStackTrace();
 		}
 
-		//System.out.println(Knoten.numKnoten);
+		// System.out.println(node.numnode);
 	}
 
-	private List<Kante> setKanten(List<Kante> kantenList, List<Knoten> knotenList) {
-		for (Kante kanten : kantenList) {
-			for (Knoten knoten : knotenList) {
-				if (kanten.getVon().equals(knoten)) {
-					knoten.setKante(kanten);
+	private List<Edge> setEdges(List<Edge> edgeList, List<Node> nodeList) {
+		for (Edge edge : edgeList) {
+			for (Node node : nodeList) {
+				if (edge.getDeparture().equals(node)) {
+					node.setEdge(edge);
 				}
 			}
 		}
-		return kantenList;
-	}
-
-	private void initialisiere(Graph graph, Knoten startKnoten) {
-		for (Knoten knoten : graph.getKnoten()) {
-			if (knoten.equals(startKnoten)) {
-				knoten.setAbstand(0.0);
-				knoten.setVorgaenger(null);
-			} else {
-				knoten.setAbstand(Double.POSITIVE_INFINITY);
-				knoten.setVorgaenger(null);
-			}
-		}
-
-	}
-
-	private List<Knoten> getNachbars(Knoten knoten) {
-		List<Knoten> nachbars = new ArrayList<>();
-		if (knoten.getKanten() == null) {
-			return null;
-		}
-		for (Kante kante : knoten.getKanten()) {
-			kante.getBis().setAbstand(knoten.getAbstand() + kante.getDistance());
-			nachbars.add(kante.getBis());
-		}
-		return nachbars;
-	}
-
-	public double getMinNachbar(List<Knoten> nachbars) {
-		Double min = null;
-		for (Knoten knoten : nachbars) {
-			if (min == null) {
-				min = knoten.getAbstand();
-			} else {
-				if (knoten.getAbstand() < min) {
-					min = knoten.getAbstand();
-
-				}
-			}
-		}
-		return min;
-	}
-
-	private Knoten getMinKnoten(List<Knoten> nachbars) {
-		Double min = null;
-		Knoten actualKnoten = null;
-		for (Knoten knoten : nachbars) {
-			if (min == null) {
-				min = knoten.getAbstand();
-				actualKnoten = knoten;
-			} else {
-				if (knoten.getAbstand() < min) {
-					actualKnoten = knoten;
-				}
-			}
-		}
-		return actualKnoten;
+		return edgeList;
 	}
 
 	/**
-	 * @return the node with the smallest distance until the start node
+	 * intializes the nodes. Aside from the star node, all the nodes will be
+	 * initialized with infinity as distance and with null as predecessor
+	 * 
+	 * @param graph
+	 * @param startNode
 	 */
-	private Knoten getAnfangsKnoten() {
-		Double min = null;
-		Knoten actualKnoten = null;
-		for (Knoten knoten : unvisitedKnoten) {
-			if (min == null) {
-				min = knoten.getAbstand();
-				actualKnoten = knoten;
+	private void initialize(Graph graph, Node startNode) {
+		for (Node node : graph.getNodes()) {
+			if (node.equals(startNode)) {
+				node.setDistance(0.0);
+				predecessor.put(node, null);
 			} else {
-				if (knoten.getAbstand() < min) {
-					actualKnoten = knoten;
+				node.setDistance(Double.POSITIVE_INFINITY);
+				predecessor.put(node, null);
+			}
+		}
+
+	}
+
+	/**
+	 * gets the neighbours and sets the nodes' distance as well
+	 * 
+	 * @param node
+	 * @return all the neighbours from this node as a list
+	 */
+	private List<Node> getNeighbours(Node node) {
+		List<Node> neighbours = new ArrayList<>();
+		if (node.getEdges() == null) {
+			return null;
+		}
+		for (Edge edge : node.getEdges()) {
+			if (edge.getDestination().getDistance() == Double.POSITIVE_INFINITY) {
+				edge.getDestination().setDistance(node.getDistance() + edge.getDistance());
+			}
+			neighbours.add(edge.getDestination());
+		}
+		return neighbours;
+	}
+
+	/**
+	 * compares the distance's value
+	 * 
+	 * @param node
+	 * @return the way with the smallest distance
+	 */
+	private double getSmallestWay(Node node) {
+		Double min = null;
+		for (Edge kante : node.getEdges()) {
+			if (min == null) {
+				min = kante.getDistance();
+			} else {
+				if (kante.getDistance() < min) {
+					min = kante.getDistance();
 				}
 			}
 		}
-		return actualKnoten;
+		return min + node.getDistance();
 	}
 
-	@SuppressWarnings("unused")
-	private Double getKanteAbstand(Knoten knotenVon, Knoten knotenBis) {
-		for (Kante kante : kanten) {
-			if (kante.getVon().getId().equals(knotenVon.getId()) && kante.getBis().getId().equals(knotenBis.getId())) {
-				return kante.getDistance();
+	/**
+	 * @param neighbours
+	 * @return the node with the smallest distance from the neighbours list
+	 */
+	private Node getMinNode(List<Node> neighbours) {
+		Double min = null;
+		Node actualNode = null;
+		for (Node node : neighbours) {
+			if (min == null) {
+				min = node.getDistance();
+				actualNode = node;
+			} else {
+				if (node.getDistance() < min) {
+					actualNode = node;
+				}
 			}
 		}
-		return null; // D.h. die beide Knoten bilden keine Kante, sollte nicht passieren!!
+		return actualNode;
 	}
 
-	@SuppressWarnings("unused")
-	private Knoten getKnoten(double alternative) {
-		for (Knoten knoten : knoten) {
-			if (knoten.getAbstand() == alternative) {
-				return knoten;
+	/**
+	 * @return the node with the smallest distance from the unvisitedNodes list
+	 */
+	private Node getFirstNode() {
+		Double min = null;
+		Node actualNode = null;
+		for (Node node : unvisitedNodes) {
+			if (min == null) {
+				min = node.getDistance();
+				actualNode = node;
+			} else {
+				if (node.getDistance() < min) {
+					min = node.getDistance();
+					actualNode = node;
+				}
 			}
 		}
-		return null;
+		return actualNode;
 	}
 
-	private double distanzUpdate(Knoten actualKnoten, List<Knoten> nachbars, double aktuellerWeg, double alternative) {
-		aktuellerWeg = getMinNachbar(nachbars); // kleinster Abstand zwischen alle
-												// Nachbarn
-		if (actualKnoten.getAbstand() == 0.0) {
-			Knoten k = getMinKnoten(nachbars);
-			nachbars.remove(k);
-			if (nachbars.size() > 0) {
-				alternative = nachbars.get(0).getAbstand();
+	private double distanzUpdate(Node actualNode, double currentWay, double alternativeWay) {
+		List<Node> neighbours = getNeighbours(actualNode);
+		if (neighbours.size() > 0) {
+			currentWay = getSmallestWay(actualNode);
+		}
+
+		if (actualNode.getDistance() == 0.0) {
+			Node k = getMinNode(neighbours);
+			neighbours.remove(k);
+			if (neighbours.size() > 0) {
+				alternativeWay = neighbours.get(0).getDistance();
 			}
-			k.setAbstand(aktuellerWeg);
-			k.setVorgaenger(actualKnoten);
+			k.setDistance(currentWay);
+			predecessor.put(k, actualNode);
+			unvisitedNodes.add(k);
 
 		} else {
-			if (alternative < aktuellerWeg) {
-				if (checkAbstand(alternative)) {
-					alternative = aktuellerWeg;
-				} else {
-
-				}
+			if (alternativeWay < currentWay) {
+				// if (checkDistance(alternativeWay)) {
+				setVorganger(checkNode(alternativeWay));
+				alternativeWay = currentWay;
+				// }
+			} else {
+				predecessor.put(getMinNode(neighbours), actualNode);
 			}
 		}
-		return alternative;
+		return alternativeWay;
 	}
 
-	private boolean checkAbstand(double alternative) {
-		for (Knoten knoten : knoten) {
-			if (knoten.getAbstand() == alternative) {
-				return true;
+	private void setVorganger(Node node) {
+		for (Edge kante : edges) {
+			if (kante.getDestination().equals(node) /* && kante.getDistance() == node.getAbstand() */) {
+				predecessor.put(node, kante.getDeparture());
+				break;
 			}
 		}
-		return false;
 	}
 
-	private Knoten getLastKnoten() {
-		for (Knoten knoten : knoten) {
-			if (knoten.getId().equals("4")) {
-				return knoten;
+	private Node checkNode(double alternativeWay) {
+		for (Node node : nodes) {
+			if (node.getDistance() == alternativeWay) {
+				unvisitedNodes.add(node);
+				return node;
 			}
 		}
 		return null;
 	}
 
-	private List<Knoten> erstelleWeg() {
-		Knoten zielKnoten = getLastKnoten();
-		List<Knoten> weg = new ArrayList<>();
-		weg.add(zielKnoten);
+	private List<Node> buildPath() {
+		Node node = getTargetNode();
+		List<Node> path = new ArrayList<>();
+		path.add(node);
 
-		while (!(zielKnoten.getVorgaenger().equals(null))) {
-			Knoten knoten = zielKnoten.getVorgaenger();
-			weg.add(0, knoten);
+		while (predecessor.get(node) != null) {
+			node = predecessor.get(node);
+			path.add(0, node);
 		}
 
-		return weg;
+		return path;
 	}
 
-	private List<Knoten> run(Algorithmus alg, Knoten startKnoten) {
-		Graph graph = new Graph(alg.kanten, alg.knoten);
+	private List<Node> run(Algorithmus alg, Node startNode) {
+		Graph graph = new Graph(alg.edges, alg.nodes);
 
-		initialisiere(graph, startKnoten);
-		unvisitedKnoten.addAll(alg.knoten);
-		double aktuellerWeg = 0.0;
-		double alternative = 0.0;
+		initialize(graph, startNode);
+		unvisitedNodes.add(startNode);
+		double currentWay = 0.0;
+		double alternativeWay = 0.0;
 
-		while (unvisitedKnoten.size() > 0) {
-			Knoten actualKnoten = getAnfangsKnoten();
-			unvisitedKnoten.remove(actualKnoten);
-			visitedKnoten.add(actualKnoten);
-			List<Knoten> nachbars = getNachbars(actualKnoten);
-			alternative = distanzUpdate(actualKnoten, nachbars, aktuellerWeg, alternative);
+		while (unvisitedNodes.size() > 0) {
+			Node actualNode = getFirstNode();
+			unvisitedNodes.remove(actualNode);
+			visitedNodes.add(actualNode);
+			alternativeWay = distanzUpdate(actualNode, currentWay, alternativeWay);
 		}
-		return erstelleWeg();
+		return buildPath();
 	}
 
-	private Knoten getFirstKnoten(String id) {
-		for (int i = 0; i < knoten.size() - 1; i++) {
-			if (knoten.get(i).getId().equals(id)) {
-				return knoten.get(i);
+	private Node getTargetNode() {
+		for (Node node : nodes) {
+			if (node.getId().equals("4")) {
+				return node;
+			}
+		}
+		return null;
+	}
+
+	private Node getFirstnode(String id) {
+		for (int i = 0; i < nodes.size() - 1; i++) {
+			if (nodes.get(i).getId().equals(id)) {
+				return nodes.get(i);
 			}
 		}
 		return null;
@@ -251,9 +272,11 @@ public class Algorithmus {
 	public static void main(String[] args) {
 		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tebelle.csv";
 		Algorithmus alg = new Algorithmus(source);
-		Knoten startKnoten = alg.getFirstKnoten("1");
+		Node startNode = alg.getFirstnode("1");
 
-		@SuppressWarnings("unused")
-		List<Knoten> weg = alg.run(alg, startKnoten);
+		List<Node> path = alg.run(alg, startNode);
+		for (int i = 0; i < path.size(); i++) {
+			System.out.print(path.get(i).getId() + ",");
+		}
 	}
 }

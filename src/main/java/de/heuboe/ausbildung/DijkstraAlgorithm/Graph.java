@@ -4,20 +4,20 @@ import java.util.*;
 
 public class Graph {
 
-	private List<Knoten> knoten;
-	private List<Kante> kanten;
+	private List<Node> nodes;
+	private List<Edge> edges;
 
-	public Graph(List<Kante> kanten, List<Knoten> knoten) {
-		this.kanten = kanten;
-		this.knoten = knoten;
+	public Graph(List<Edge> edges, List<Node> nodes) {
+		this.edges = edges;
+		this.nodes = nodes;
 	}
 
-	public List<Knoten> getKnoten() {
-		return knoten;
+	public List<Node> getNodes() {
+		return nodes;
 	}
 
-	public List<Kante> getKanten() {
-		return kanten;
+	public List<Edge> getEdges() {
+		return edges;
 	}
 
 }
