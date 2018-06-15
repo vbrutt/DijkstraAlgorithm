@@ -2,24 +2,24 @@ package de.heuboe.ausbildung.DijkstraAlgorithm;
 
 public class Edge {
 
-	private Node departure;
+	private Node origin;
 	private Node destination;
 	private String id;
 	private double distance;
 
-	public Edge(Node departure, Node destination, String id, double distance) {
-		this.departure = departure;
+	public Edge(Node origin, Node destination, String id, double distance) {
+		this.origin = origin;
 		this.destination = destination;
 		this.id = id;
 		this.distance = distance;
 	}
 
-	public Node getDeparture() {
-		return departure;
+	public Node getOrigin() {
+		return origin;
 	}
 
-	public void setDeparture(Node departure) {
-		this.departure = departure;
+	public void setOrigin(Node origin) {
+		this.origin = origin;
 	}
 
 	public Node getDestination() {

@@ -7,30 +7,30 @@ import org.apache.commons.csv.*;
 
 public class Algorithmus {
 
-	private List<Edge> edges = new ArrayList<>();
-	private List<Node> nodes = new ArrayList<>();
+	// private List<Node> nodes = new ArrayList<>();
 	private List<Node> unvisitedNodes = new ArrayList<>();
-	private List<Node> visitedNodes = new ArrayList<>();
 	private Map<Node, Node> predecessor = new HashMap<>();
-	private Map<String, Node> allenode = new HashMap<>();
+	private Map<String, Node> nodeMap = new HashMap<>();
+	private Node targetNode;
+	private Node initialNode;
 
 	private Node getNode(String id) {
-		Node node = allenode.get(id);
+		Node node = nodeMap.get(id);
 		if (node == null) {
 			node = new Node(id);
-			allenode.put(id, node);
+			nodeMap.put(id, node);
 		}
 		return node;
 	}
 
 	/**
-	 * initializes the class, by reading the csv file and setting the edges and
+	 * Iinitializes the class, by reading the csv-file and setting the edges and
 	 * nodes
 	 * 
 	 * @param source
 	 *            from the csv-file
 	 */
-	public Algorithmus(String source) {
+	public Algorithmus(String source, String initialNodeId, String targetNodeId) {
 		CSVFormat format = CSVFormat.EXCEL.withHeader().withDelimiter(';');
 		List<Edge> edgeList = new ArrayList<>();
 		List<Node> nodeList = new ArrayList<>();
@@ -41,242 +41,135 @@ public class Algorithmus {
 			for (CSVRecord record : parser.getRecords()) {
 				Node node1 = getNode(record.get("von"));
 				Node node2 = getNode(record.get("bis"));
-				Edge kante = new Edge(node1, node2, record.get("id"), Double.parseDouble(record.get("Abstand")));
+				Edge edge = new Edge(node1, node2, record.get("id"), Double.parseDouble(record.get("Abstand")));
 
 				nodeSet.add(node1);
 				nodeSet.add(node2);
-				edgeList.add(kante);
+				edgeList.add(edge);
 			}
 			nodeList.addAll(nodeSet);
 
-			edgeList = setEdges(edgeList, nodeList);
-			this.edges = edgeList;
-			this.nodes = nodeList;
+			setEdges(edgeList);
+			this.unvisitedNodes = nodeList;
+			this.targetNode = getNode(targetNodeId);
+			this.initialNode = getNode(initialNodeId);
 			parser.close();
 			reader.close();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		// System.out.println(node.numnode);
-	}
-
-	private List<Edge> setEdges(List<Edge> edgeList, List<Node> nodeList) {
-		for (Edge edge : edgeList) {
-			for (Node node : nodeList) {
-				if (edge.getDeparture().equals(node)) {
-					node.setEdge(edge);
-				}
-			}
-		}
-		return edgeList;
 	}
 
 	/**
-	 * intializes the nodes. Aside from the star node, all the nodes will be
-	 * initialized with infinity as distance and with null as predecessor
+	 * Adds the edges to the respective nodes
 	 * 
-	 * @param graph
-	 * @param startNode
+	 * @param edgeList
 	 */
-	private void initialize(Graph graph, Node startNode) {
-		for (Node node : graph.getNodes()) {
-			if (node.equals(startNode)) {
-				node.setDistance(0.0);
-				predecessor.put(node, null);
-			} else {
-				node.setDistance(Double.POSITIVE_INFINITY);
-				predecessor.put(node, null);
-			}
+	private static void setEdges(List<Edge> edgeList) {
+		for (Edge edge : edgeList) {
+			Node node = edge.getOrigin();
+			node.addEdge(edge);
 		}
-
 	}
 
 	/**
-	 * gets the neighbours and sets the nodes' distance as well
+	 * Intializes the node's distance with infinity and the predecessor with null.
+	 * The initial node's distance is set to 0.0
+	 */
+	private void initialize() {
+		for (Node node : unvisitedNodes) {
+			node.setDistance(Double.POSITIVE_INFINITY);
+			predecessor.put(node, null);
+		}
+		initialNode.setDistance(0.0);
+	}
+
+	private void distanceUpdate(Edge edge, Node node) {
+		if (edge.getDestination().getDistance() > edge.getDistance() + node.getDistance()) {
+			edge.getDestination().setDistance(edge.getDistance() + node.getDistance());
+			predecessor.put(edge.getDestination(), edge.getOrigin());
+		}
+	}
+
+	/**
+	 * If the the node's neighbours are marked as unvisited, then the distance will
+	 * be set as the edge's weight plus the node's distance. The predecessor to this
+	 * node will also be set
 	 * 
 	 * @param node
-	 * @return all the neighbours from this node as a list
+	 *            the current node
 	 */
-	private List<Node> getNeighbours(Node node) {
-		List<Node> neighbours = new ArrayList<>();
-		if (node.getEdges() == null) {
-			return null;
-		}
+	private void setDistances(Node node) {
 		for (Edge edge : node.getEdges()) {
 			if (edge.getDestination().getDistance() == Double.POSITIVE_INFINITY) {
-				edge.getDestination().setDistance(node.getDistance() + edge.getDistance());
-			}
-			neighbours.add(edge.getDestination());
-		}
-		return neighbours;
-	}
-
-	/**
-	 * compares the distance's value
-	 * 
-	 * @param node
-	 * @return the way with the smallest distance
-	 */
-	private double getSmallestWay(Node node) {
-		Double min = null;
-		for (Edge kante : node.getEdges()) {
-			if (min == null) {
-				min = kante.getDistance();
+				edge.getDestination().setDistance(edge.getDistance() + node.getDistance());
+				predecessor.put(edge.getDestination(), edge.getOrigin());
 			} else {
-				if (kante.getDistance() < min) {
-					min = kante.getDistance();
-				}
+				distanceUpdate(edge, node);
 			}
 		}
-		return min + node.getDistance();
 	}
 
 	/**
-	 * @param neighbours
-	 * @return the node with the smallest distance from the neighbours list
+	 * @return the node with the smallest distance from the unvisited nodes list
 	 */
-	private Node getMinNode(List<Node> neighbours) {
+	private Node getMinimalNode() {
 		Double min = null;
-		Node actualNode = null;
-		for (Node node : neighbours) {
-			if (min == null) {
-				min = node.getDistance();
-				actualNode = node;
-			} else {
-				if (node.getDistance() < min) {
-					actualNode = node;
-				}
-			}
-		}
-		return actualNode;
-	}
-
-	/**
-	 * @return the node with the smallest distance from the unvisitedNodes list
-	 */
-	private Node getFirstNode() {
-		Double min = null;
-		Node actualNode = null;
+		Node minNode = null;
 		for (Node node : unvisitedNodes) {
 			if (min == null) {
 				min = node.getDistance();
-				actualNode = node;
-			} else {
-				if (node.getDistance() < min) {
-					min = node.getDistance();
-					actualNode = node;
-				}
+				minNode = node;
+			} else if (node.getDistance() < min) {
+				min = node.getDistance();
+				minNode = node;
 			}
 		}
-		return actualNode;
-	}
-
-	private double distanzUpdate(Node actualNode, double currentWay, double alternativeWay) {
-		List<Node> neighbours = getNeighbours(actualNode);
-		if (neighbours.size() > 0) {
-			currentWay = getSmallestWay(actualNode);
-		}
-
-		if (actualNode.getDistance() == 0.0) {
-			Node k = getMinNode(neighbours);
-			neighbours.remove(k);
-			if (neighbours.size() > 0) {
-				alternativeWay = neighbours.get(0).getDistance();
-			}
-			k.setDistance(currentWay);
-			predecessor.put(k, actualNode);
-			unvisitedNodes.add(k);
-
-		} else {
-			if (alternativeWay < currentWay) {
-				// if (checkDistance(alternativeWay)) {
-				setVorganger(checkNode(alternativeWay));
-				alternativeWay = currentWay;
-				// }
-			} else {
-				predecessor.put(getMinNode(neighbours), actualNode);
-			}
-		}
-		return alternativeWay;
-	}
-
-	private void setVorganger(Node node) {
-		for (Edge kante : edges) {
-			if (kante.getDestination().equals(node) /* && kante.getDistance() == node.getAbstand() */) {
-				predecessor.put(node, kante.getDeparture());
-				break;
-			}
-		}
-	}
-
-	private Node checkNode(double alternativeWay) {
-		for (Node node : nodes) {
-			if (node.getDistance() == alternativeWay) {
-				unvisitedNodes.add(node);
-				return node;
-			}
-		}
-		return null;
+		return minNode;
 	}
 
 	private List<Node> buildPath() {
-		Node node = getTargetNode();
+		Node node = targetNode;
 		List<Node> path = new ArrayList<>();
 		path.add(node);
+
+		if (node.getDistance() == Double.POSITIVE_INFINITY) {
+			throw new RuntimeException("Keine Verbindung zwischen Startknoten und Endknoten!");
+		}
 
 		while (predecessor.get(node) != null) {
 			node = predecessor.get(node);
 			path.add(0, node);
 		}
-
 		return path;
 	}
 
-	private List<Node> run(Algorithmus alg, Node startNode) {
-		Graph graph = new Graph(alg.edges, alg.nodes);
+	private boolean canTerminate(Node currentNode) {
+		for (Node node : unvisitedNodes) {
+			if (node.getDistance() < currentNode.getDistance()) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-		initialize(graph, startNode);
-		unvisitedNodes.add(startNode);
-		double currentWay = 0.0;
-		double alternativeWay = 0.0;
+	public List<Node> run(Algorithmus alg) {
+		initialize();
+		int count = 0;
 
 		while (unvisitedNodes.size() > 0) {
-			Node actualNode = getFirstNode();
-			unvisitedNodes.remove(actualNode);
-			visitedNodes.add(actualNode);
-			alternativeWay = distanzUpdate(actualNode, currentWay, alternativeWay);
+			Node currentNode = getMinimalNode();
+			unvisitedNodes.remove(currentNode);
+			if (!(currentNode == targetNode && canTerminate(currentNode))) {
+				setDistances(currentNode);
+				count++;
+				continue;
+			}
+			unvisitedNodes.clear();
+			count++;
 		}
+		System.out.println(count);
 		return buildPath();
-	}
-
-	private Node getTargetNode() {
-		for (Node node : nodes) {
-			if (node.getId().equals("4")) {
-				return node;
-			}
-		}
-		return null;
-	}
-
-	private Node getFirstnode(String id) {
-		for (int i = 0; i < nodes.size() - 1; i++) {
-			if (nodes.get(i).getId().equals(id)) {
-				return nodes.get(i);
-			}
-		}
-		return null;
-	}
-
-	public static void main(String[] args) {
-		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tebelle.csv";
-		Algorithmus alg = new Algorithmus(source);
-		Node startNode = alg.getFirstnode("1");
-
-		List<Node> path = alg.run(alg, startNode);
-		for (int i = 0; i < path.size(); i++) {
-			System.out.print(path.get(i).getId() + ",");
-		}
 	}
 }

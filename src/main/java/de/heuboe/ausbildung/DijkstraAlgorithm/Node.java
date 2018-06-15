@@ -43,7 +43,7 @@ public class Node {
 		this.edges = edges;
 	}
 
-	public void setEdge(Edge edge) {
+	public void addEdge(Edge edge) {
 		this.edges.add(edge);
 	}
 
