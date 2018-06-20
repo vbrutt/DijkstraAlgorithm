@@ -5,14 +5,14 @@ import java.util.*;
 
 import org.apache.commons.csv.*;
 
-public class Algorithmus {
-
-	// private List<Node> nodes = new ArrayList<>();
+public class QuickestWay {
+	private List<Edge> edges = new ArrayList<>();
 	private List<Node> unvisitedNodes = new ArrayList<>();
 	private Map<Node, Node> predecessor = new HashMap<>();
 	private Map<String, Node> nodeMap = new HashMap<>();
 	private Node targetNode;
 	private Node initialNode;
+	protected double time;
 
 	private Node getNode(String id) {
 		Node node = nodeMap.get(id);
@@ -24,13 +24,13 @@ public class Algorithmus {
 	}
 
 	/**
-	 * Iinitializes the class, by reading the csv-file and setting the edges and
+	 * Initializes the class, by reading the csv-file and setting the edges and
 	 * nodes
 	 * 
 	 * @param source
 	 *            from the csv-file
 	 */
-	public Algorithmus(String source, String initialNodeId, String targetNodeId) {
+	public QuickestWay(String source, String initialNodeId, String targetNodeId) {
 		CSVFormat format = CSVFormat.EXCEL.withHeader().withDelimiter(';');
 		List<Edge> edgeList = new ArrayList<>();
 		List<Node> nodeList = new ArrayList<>();
@@ -41,7 +41,8 @@ public class Algorithmus {
 			for (CSVRecord record : parser.getRecords()) {
 				Node node1 = getNode(record.get("von"));
 				Node node2 = getNode(record.get("bis"));
-				Edge edge = new Edge(node1, node2, record.get("id"), Double.parseDouble(record.get("Abstand")));
+				Edge edge = new Edge(node1, node2, record.get("id"), Double.parseDouble(record.get("Abstand")),
+						record.get("Typ"));
 
 				nodeSet.add(node1);
 				nodeSet.add(node2);
@@ -50,6 +51,7 @@ public class Algorithmus {
 			nodeList.addAll(nodeSet);
 
 			setEdges(edgeList);
+			this.edges = edgeList;
 			this.unvisitedNodes = nodeList;
 			this.targetNode = getNode(targetNodeId);
 			this.initialNode = getNode(initialNodeId);
@@ -81,12 +83,15 @@ public class Algorithmus {
 		for (Node node : unvisitedNodes) {
 			node.setDistance(Double.POSITIVE_INFINITY);
 			predecessor.put(node, null);
+			node.setTime(Double.POSITIVE_INFINITY);
 		}
 		initialNode.setDistance(0.0);
+		initialNode.setTime(0.0);
 	}
 
 	private void distanceUpdate(Edge edge, Node node) {
-		if (edge.getDestination().getDistance() > edge.getDistance() + node.getDistance()) {
+		if (edge.getDestination().getTime() > node.getTime()) {
+			edge.getDestination().setTime((edge.getDistance() / edge.getSpeedLimit()) + node.getTime());
 			edge.getDestination().setDistance(edge.getDistance() + node.getDistance());
 			predecessor.put(edge.getDestination(), edge.getOrigin());
 		}
@@ -102,7 +107,8 @@ public class Algorithmus {
 	 */
 	private void setDistances(Node node) {
 		for (Edge edge : node.getEdges()) {
-			if (edge.getDestination().getDistance() == Double.POSITIVE_INFINITY) {
+			if (edge.getDestination().getTime() == Double.POSITIVE_INFINITY) {
+				edge.getDestination().setTime(edge.getDistance() / edge.getSpeedLimit());
 				edge.getDestination().setDistance(edge.getDistance() + node.getDistance());
 				predecessor.put(edge.getDestination(), edge.getOrigin());
 			} else {
@@ -114,19 +120,36 @@ public class Algorithmus {
 	/**
 	 * @return the node with the smallest distance from the unvisited nodes list
 	 */
+
 	private Node getMinimalNode() {
 		Double min = null;
 		Node minNode = null;
 		for (Node node : unvisitedNodes) {
 			if (min == null) {
-				min = node.getDistance();
+				min = node.getTime();
 				minNode = node;
-			} else if (node.getDistance() < min) {
-				min = node.getDistance();
+			} else if (node.getTime() < min) {
+				min = node.getTime();
 				minNode = node;
 			}
 		}
 		return minNode;
+	}
+
+	private Edge getEdge(Node origin, Node destination) {
+		for (Edge edge : edges) {
+			if (edge.getOrigin() == origin && edge.getDestination() == destination) {
+				return edge;
+			}
+		}
+		return null;
+	}
+
+	private void calculateRoute(List<Node> path) {
+		for (int i = 0; i < path.size() - 1; i++) {
+			Edge e = getEdge(path.get(i), path.get(i + 1));
+			time += (e.getDistance() / e.getSpeedLimit());
+		}
 	}
 
 	private List<Node> buildPath() {
@@ -134,42 +157,22 @@ public class Algorithmus {
 		List<Node> path = new ArrayList<>();
 		path.add(node);
 
-		if (node.getDistance() == Double.POSITIVE_INFINITY) {
-			throw new RuntimeException("Keine Verbindung zwischen Startknoten und Endknoten!");
-		}
-
 		while (predecessor.get(node) != null) {
 			node = predecessor.get(node);
 			path.add(0, node);
 		}
+		calculateRoute(path);
 		return path;
 	}
 
-	private boolean canTerminate(Node currentNode) {
-		for (Node node : unvisitedNodes) {
-			if (node.getDistance() < currentNode.getDistance()) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public List<Node> run(Algorithmus alg) {
+	public List<Node> run() {
 		initialize();
-		int count = 0;
 
 		while (unvisitedNodes.size() > 0) {
 			Node currentNode = getMinimalNode();
 			unvisitedNodes.remove(currentNode);
-			if (!(currentNode == targetNode && canTerminate(currentNode))) {
-				setDistances(currentNode);
-				count++;
-				continue;
-			}
-			unvisitedNodes.clear();
-			count++;
+			setDistances(currentNode);
 		}
-		System.out.println(count);
 		return buildPath();
 	}
 }
