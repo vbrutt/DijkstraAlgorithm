@@ -9,7 +9,7 @@ public class Node {
 	private String id;
 	private List<Edge> edges = new ArrayList<>();
 	private Double distance;
-	private Double time;
+	private Double duration;
 
 	public Node(String id) {
 		numKnoten++;
@@ -56,11 +56,11 @@ public class Node {
 		this.distance = distance;
 	}
 
-	public Double getTime() {
-		return time;
+	public Double getDuration() {
+		return duration;
 	}
 
-	public void setTime(Double time) {
-		this.time = time;
+	public void setDuration(Double duration) {
+		this.duration = duration;
 	}
 }

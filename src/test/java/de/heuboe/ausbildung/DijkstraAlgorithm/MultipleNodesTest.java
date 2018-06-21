@@ -8,7 +8,7 @@ public class MultipleNodesTest {
 
 	@Test
 	public void parallelogramm() {
-		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tabelle.csv";
+		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tabelle1.csv";
 
 		ShortestWay sW = new ShortestWay(source, "1", "4");
 		List<Node> path = sW.run();
@@ -21,7 +21,7 @@ public class MultipleNodesTest {
 
 	@Test
 	public void parallelogrammAndereRichtung() {
-		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tabelle.csv";
+		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tabelle1.csv";
 		ShortestWay sW = new ShortestWay(source, "4", "1");
 		List<Node> path = sW.run();
 
@@ -72,26 +72,12 @@ public class MultipleNodesTest {
 
 	@Test // Keine Verbindung zwischen Endknoten und die andere Knoten
 	public void keineVerbindung() {
-		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tabelle.csv";
+		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tabelle1.csv";
 
 		ShortestWay sW = new ShortestWay(source, "1", "6");
 		List<Node> path = sW.run();
 
 		QuickestWay qW = new QuickestWay(source, "1", "6");
-		List<Node> path2 = qW.run();
-
-		Output.output(path, path2, sW, qW);
-
-	}
-
-	@Test
-	public void aussenPunkt() {
-		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tabelle4.csv";
-
-		ShortestWay sW = new ShortestWay(source, "1", "8");
-		List<Node> path = sW.run();
-
-		QuickestWay qW = new QuickestWay(source, "1", "8");
 		List<Node> path2 = qW.run();
 
 		Output.output(path, path2, sW, qW);

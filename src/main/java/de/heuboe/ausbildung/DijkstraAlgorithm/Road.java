@@ -19,5 +19,4 @@ public class Road {
 		}
 		throw new RuntimeException("Unvalid road type");
 	}
-
 }

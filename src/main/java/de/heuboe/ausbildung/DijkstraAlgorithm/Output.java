@@ -11,14 +11,14 @@ public class Output {
 		for (int i = 0; i < path.size(); i++) {
 			System.out.print(path.get(i).getId() + ",");
 		}
-		System.out.println(" Total distance: " + path.get(path.size() - 1).getDistance() + " km" + "\nRoute time: "
-				+ f.format(sW.time) + " Hours");
+		System.out.println(" Total distance: " + path.get(path.size() - 1).getDistance() + " km" + "\nRoute duration: "
+				+ f.format(sW.duration) + " Hours");
 
 		System.out.print("Quickest way: ");
 		for (int i = 0; i < path2.size(); i++) {
 			System.out.print(path2.get(i).getId() + ",");
 		}
-		System.out.println(" Total distance: " + path2.get(path2.size() - 1).getDistance() + " km" + "\nRoute time: "
-				+ f.format(qW.time) + " Hours\n");
+		System.out.println(" Total distance: " + path2.get(path2.size() - 1).getDistance() + " km" + "\nRoute duration: "
+				+ f.format(qW.duration) + " Hours\n");
 	}
 }
