@@ -1,6 +1,9 @@
 package de.heuboe.ausbildung.DijkstraAlgorithm;
 
+import java.io.*;
 import java.util.*;
+
+import org.opengis.referencing.*;
 
 public class ShortestWay extends Way {
 	/**
@@ -16,6 +19,12 @@ public class ShortestWay extends Way {
 	 */
 	public ShortestWay(String source, String initialNodeId, String targetNodeId) {
 		super(source, initialNodeId, targetNodeId);
+
+	}
+
+	public ShortestWay() throws IOException, FactoryException {
+		super();
+
 	}
 
 	private void distanceUpdate(Edge edge, Node node) {
@@ -35,11 +44,14 @@ public class ShortestWay extends Way {
 	 */
 	private void setDistances(Node node) {
 		for (Edge edge : node.getEdges()) {
-			if (edge.getDestination().getDistance() == Double.POSITIVE_INFINITY) {
-				edge.getDestination().setDistance(edge.getDistance() + node.getDistance());
-				predecessor.put(edge.getDestination(), edge.getOrigin());
-			} else {
-				distanceUpdate(edge, node);
+			if (!(node.isChecked())) {
+				if (edge.getDestination().getDistance() == Double.POSITIVE_INFINITY) {
+					edge.getDestination().setDistance(edge.getDistance() + node.getDistance());
+					predecessor.put(edge.getDestination(), edge.getOrigin());
+					
+				} else {
+					distanceUpdate(edge, node);
+				}
 			}
 		}
 	}
@@ -65,7 +77,7 @@ public class ShortestWay extends Way {
 
 	/**
 	 * @param currentNode
-	 * @return true if the distance set in the current node the smallest is.
+	 * @return true if the distance set in the current node is the smallest.
 	 *         Otherwise return false
 	 */
 	private boolean canTerminate(Node currentNode) {
@@ -82,11 +94,16 @@ public class ShortestWay extends Way {
 
 		while (unvisitedNodes.size() > 0) {
 			Node currentNode = getMinimalNode();
+			if (currentNode.getId().equals("7523")) {
+				System.out.println();
+			}
 			unvisitedNodes.remove(currentNode);
 			if (!(currentNode == targetNode && canTerminate(currentNode))) {
 				setDistances(currentNode);
+				currentNode.setChecked(true);
 				continue;
 			}
+			System.out.println();
 			unvisitedNodes.clear();
 		}
 		return buildPath();

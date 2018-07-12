@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.commons.csv.*;
+import org.opengis.referencing.*;
 
 public class Way {
 	protected List<Edge> edges = new ArrayList<>();
@@ -14,8 +15,8 @@ public class Way {
 	protected Node initialNode;
 	protected double duration;
 
-	private Node getNode(String id) {
-		Node node = nodeMap.get(id);
+	public Node getNode(String id) {
+		Node node = Node.nodes.get(id);
 		if (node == null) {
 			node = new Node(id);
 			nodeMap.put(id, node);
@@ -45,8 +46,7 @@ public class Way {
 			for (CSVRecord record : parser.getRecords()) {
 				Node node1 = getNode(record.get("von"));
 				Node node2 = getNode(record.get("bis"));
-				Edge edge = new Edge(node1, node2, record.get("id"), Double.parseDouble(record.get("Abstand")),
-						record.get("Typ"));
+				Edge edge = new Edge(node1, node2);
 
 				nodeSet.add(node1);
 				nodeSet.add(node2);
@@ -79,6 +79,39 @@ public class Way {
 		}
 	}
 
+	public Way(String initialNodeId, String targetNodeId) throws IOException, FactoryException {
+		int n = Input2.chooseTypeOfWay();
+	
+		
+		switch (n) {
+		case 1:
+			ShortestWay sW = new ShortestWay();
+			sW.initialNode = getNode(initialNodeId);
+			sW.targetNode = getNode(targetNodeId);
+			List<Node> path = sW.run();
+			
+			Output.outputLCL(path, sW.duration);
+			break;
+
+		case 2:
+			new Way();
+			QuickestWay qW = new QuickestWay(initialNodeId, targetNodeId);
+			qW.run();
+			break;
+
+		}
+
+	}
+
+	public Way() throws IOException, FactoryException {
+
+		Graph graph = Input2.getNetFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
+		this.edges = graph.getEdges();
+		this.unvisitedNodes = graph.getNodes(); // TODO ALG Punkte miteinbauen (bis jetzt: 4423 Knoten;
+												// soll: 4955)
+		
+	}
+
 	/**
 	 * Intializes the node's distance with infinity and the predecessor with null.
 	 * The initial node's distance and duration are set to 0.0
@@ -95,7 +128,8 @@ public class Way {
 
 	protected Edge getEdge(Node origin, Node destination) {
 		for (Edge edge : edges) {
-			if (edge.getOrigin() == origin && edge.getDestination() == destination) {
+			if (edge.getOrigin() == origin && edge.getDestination() == destination
+					|| edge.getOrigin() == destination && edge.getDestination() == origin) {
 				return edge;
 			}
 		}
@@ -105,7 +139,7 @@ public class Way {
 	protected void calculateRouteDuration(List<Node> path) {
 		for (int i = 0; i < path.size() - 1; i++) {
 			Edge e = getEdge(path.get(i), path.get(i + 1));
-			duration += (e.getDistance() / e.getSpeedLimit());
+			duration += ((e.getDistance() / 1000) / e.getSpeedLimit());
 		}
 	}
 
@@ -114,14 +148,14 @@ public class Way {
 		List<Node> path = new ArrayList<>();
 		path.add(node);
 
-		if (node.getDistance() == Double.POSITIVE_INFINITY) {
-			throw new RuntimeException("Keine Verbindung zwischen Startknoten und Endknoten!");
-		}
-
+		double distance = 0;
 		while (predecessor.get(node) != null) {
+			Edge edge = getEdge(node, predecessor.get(node));
+			distance += edge.getDistance();
 			node = predecessor.get(node);
 			path.add(0, node);
 		}
+		path.get(path.size() - 1).setDistance(distance);
 		calculateRouteDuration(path);
 		return path;
 	}

@@ -1,6 +1,9 @@
 package de.heuboe.ausbildung.DijkstraAlgorithm;
 
+import java.io.*;
 import java.util.*;
+
+import org.opengis.referencing.*;
 
 public class QuickestWay extends Way {
 
@@ -17,6 +20,10 @@ public class QuickestWay extends Way {
 	 */
 	public QuickestWay(String source, String initialNodeId, String targetNodeId) {
 		super(source, initialNodeId, targetNodeId);
+	}
+	
+	public QuickestWay(String initialNodeId, String targetNodeId) throws IOException, FactoryException {
+		super(initialNodeId, targetNodeId);
 	}
 
 	private void distanceUpdate(Edge edge, Node node) {
@@ -56,10 +63,10 @@ public class QuickestWay extends Way {
 		}
 		return minNode;
 	}
-	
+
 	public List<Node> run() {
 		initialize();
-
+		
 		while (unvisitedNodes.size() > 0) {
 			Node currentNode = getMinimalNode();
 			unvisitedNodes.remove(currentNode);
