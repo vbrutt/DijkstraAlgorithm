@@ -2,93 +2,25 @@ package de.heuboe.ausbildung.DijkstraAlgorithm;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.*;
 
 import org.junit.*;
 import org.opengis.referencing.*;
 
 public class MultipleNodesTest {
+    private static final Logger LOGGER = Logger.getLogger(Input2.class.getName());
 
-	// @Test
-	public void parallelogramm() {
-		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tabelle1.csv";
+    // Meistens, auch bei Google Maps, ist der kürzerster Weg auch der schnellster
+    // Weg, denn hier wird meistens auf Autobahnen gefahren
+    @Test
+    public void newAlgorithm() throws IOException, FactoryException {
+        LOGGER.info("1 - SHORTEST WAY \n2 - QUICKEST WAY"); /* debug, info, warning, error, fatal */
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        sc.close();
 
-		ShortestWay sW = new ShortestWay(source, "1", "4");
-		List<Node> path = sW.run();
-
-		QuickestWay qW = new QuickestWay(source, "1", "4");
-		List<Node> path2 = qW.run();
-
-		Output.output(path, path2, sW, qW);
-	}
-
-	// @Test
-	public void parallelogrammAndereRichtung() {
-		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tabelle1.csv";
-		ShortestWay sW = new ShortestWay(source, "4", "1");
-		List<Node> path = sW.run();
-
-		QuickestWay qW = new QuickestWay(source, "4", "1");
-		List<Node> path2 = qW.run();
-
-		Output.output(path, path2, sW, qW);
-	}
-
-	// @Test
-	public void weiterePunkte() {
-		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tabelle2.csv";
-
-		ShortestWay sW = new ShortestWay(source, "1", "8");
-		List<Node> path = sW.run();
-
-		QuickestWay qW = new QuickestWay(source, "1", "8");
-		List<Node> path2 = qW.run();
-
-		Output.output(path, path2, sW, qW);
-	}
-
-	// @Test
-	public void weiterePunkte2() {
-		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tabelle3.csv";
-
-		ShortestWay sW = new ShortestWay(source, "1", "9");
-		List<Node> path = sW.run();
-
-		QuickestWay qW = new QuickestWay(source, "1", "9");
-		List<Node> path2 = qW.run();
-
-		Output.output(path, path2, sW, qW);
-	}
-
-	// @Test
-	public void gleicheAbstaende() {
-		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tabelle_alleGleich.csv";
-
-		ShortestWay sW = new ShortestWay(source, "1", "4");
-		List<Node> path = sW.run();
-
-		QuickestWay qW = new QuickestWay(source, "1", "4");
-		List<Node> path2 = qW.run();
-
-		Output.output(path, path2, sW, qW);
-	}
-
-	// @Test // Keine Verbindung zwischen Endknoten und die andere Knoten
-	public void keineVerbindung() {
-		String source = "C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\Kanten_Tabelle1.csv";
-
-		ShortestWay sW = new ShortestWay(source, "1", "6");
-		List<Node> path = sW.run();
-
-		QuickestWay qW = new QuickestWay(source, "1", "6");
-		List<Node> path2 = qW.run();
-
-		Output.output(path, path2, sW, qW);
-	}
-
-	@Test
-	public void newAlgorithm() throws IOException, FactoryException {
-		// ShortestWay sW = new ShortestWay("10141", "11104");
-		Way way = new Way("10141", "11104");
-
-	}
+        Way way = new Way("11104", "11769", n); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln
+        List<Node> path = way.run();
+        Output.outputLCL(path, way.getDuration());
+    }
 }

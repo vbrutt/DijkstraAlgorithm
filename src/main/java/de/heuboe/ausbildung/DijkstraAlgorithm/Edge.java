@@ -2,75 +2,88 @@ package de.heuboe.ausbildung.DijkstraAlgorithm;
 
 import de.heuboe.ausbildung.subwayPlan.process.*;
 
+/**
+ * Describes an edge composed by two nodes
+ * 
+ * @author verab
+ *
+ */
 public class Edge {
 
-	private Node origin;
-	private Node destination;
-	private String id;
-	
-	private double distance;
-	private double speedLimit;
-	// private String roadType;
+    private Node origin;
+    private Node destination;
+    private String id;
 
-	public Edge(Node origin, Node destination) {
-		this.origin = origin;
-		this.destination = destination;
-	}
+    private double distance;
+    private double speedLimit;
 
-	public Node getOrigin() {
-		return origin;
-	}
+    /**
+     * creates an edge from the origin node to the destination node
+     * 
+     * @param origin
+     *            node
+     * @param destination
+     *            node
+     */
+    public Edge(Node origin, Node destination) {
+        this.origin = origin;
+        this.destination = destination;
+    }
 
-	public void setOrigin(Node origin) {
-		this.origin = origin;
-	}
+    public Node getOrigin() {
+        return origin;
+    }
 
-	public Node getDestination() {
-		return destination;
-	}
+    public void setOrigin(Node origin) {
+        this.origin = origin;
+    }
 
-	public void setDestination(Node destination) {
-		this.destination = destination;
-	}
+    public Node getDestination() {
+        return destination;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public void setDestination(Node destination) {
+        this.destination = destination;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public double getSpeedLimit() {
-		return setSpeedLimit(origin.getRoadType());
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setSpeedLimit(double speedLimit) {
-		this.speedLimit = speedLimit;
-	}
+    public double getSpeedLimit() {
+        Road2 r = new Road2();
+        double limit = r.getSpeedLimit(origin.getRoadType());
+        setSpeedLimit(limit);
+        return speedLimit;
+    }
 
-	public int setSpeedLimit(String roadType) {
-		Road2 r = new Road2();
-		return r.getSpeedLimit(roadType);
-	}
+    public void setSpeedLimit(double speedLimit) {
+        this.speedLimit = speedLimit;
+    }
 
-	public double getDistance() {
-		Node a = this.origin;
-		Node b = this.destination;
+    public double getDistance() {
+        double dist = 0;
+        setDistance(dist);
+        return distance;
+    }
 
-		double deltaX = Tools.getDelta(a.getX(), b.getX());
-		double deltaY = Tools.getDelta(a.getY(), b.getY());
+    public void setDistance(double distance) {
+        Node a = this.origin;
+        Node b = this.destination;
 
-		deltaX = Math.pow(deltaX, 2);
-		deltaY = Math.pow(deltaY, 2);
+        double deltaX = Tools.getDelta(a.getX(), b.getX());
+        double deltaY = Tools.getDelta(a.getY(), b.getY());
 
-		double sum = deltaX + deltaY;
-		double distance = Math.sqrt(sum);
+        deltaX = Math.pow(deltaX, 2);
+        deltaY = Math.pow(deltaY, 2);
 
-		return this.distance = distance;
-	}
+        double sum = deltaX + deltaY;
+        distance = Math.sqrt(sum);
 
-	public void setDistance(double distance) {
-		this.distance = distance;
-	}
+        this.distance = distance;
+    }
 }
