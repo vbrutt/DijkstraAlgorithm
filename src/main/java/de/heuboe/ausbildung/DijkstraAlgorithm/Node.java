@@ -26,7 +26,7 @@ public class Node {
     private boolean checked;
     private String roadType;
     private String name;
-    private static int generalDistance; // spaeter fuers switch case
+    private static int generalDistance;
 
     protected static Map<String, Node> nodes = new HashMap<>();
 
@@ -97,10 +97,10 @@ public class Node {
         generalDistance = i;
     }
 
-    public Double getDistance() {
+    public Double getSortOfDistance() {
         switch (generalDistance) {
         case 1:
-            return getDist();
+            return getDistance();
         case 2:
             return getDuration();
         default:
@@ -108,23 +108,29 @@ public class Node {
         }
     }
 
-    public Double getDist() {
+    public Double getDistance() {
         return distance;
     }
 
-    // setDistance2
     public void setDist(double distance) {
         this.distance = distance;
     }
 
     public void shortestDistance(Edge edge, Node node) {
-        edge.getDestination().setDist(edge.getDistance() + node.getDist());
+        edge.getDestination().setDist(edge.getDistance() + node.getDistance());
     }
 
     public void quickestDistance(Edge edge, Node node) {
         edge.getDestination().setDistance((edge.getDistance() / edge.getSpeedLimit()) + node.getDuration());
     }
 
+    /**
+     * use of the switch case to decide what should be compared. Either the distance
+     * between the two nodes or the duration of the route
+     * 
+     * @param edge
+     * @param node
+     */
     public void setDistance(Edge edge, Node node) {
         switch (generalDistance) {
         case 1:
@@ -139,13 +145,19 @@ public class Node {
 
     }
 
-    public void setDistance(double distance) {
+    /**
+     * sets the distance/duration for this node when there's already a concrete
+     * value
+     * 
+     * @param distanceValue
+     */
+    public void setDistance(double distanceValue) {
         switch (generalDistance) {
         case 1:
-            this.distance = distance;
+            this.distance = distanceValue;
             break;
         case 2:
-            this.duration = distance;
+            this.duration = distanceValue;
             break;
         default:
             break;

@@ -66,12 +66,11 @@ public class Edge {
     }
 
     public double getDistance() {
-        double dist = 0;
-        setDistance(dist);
+        setDistance();
         return distance;
     }
 
-    public void setDistance(double distance) {
+    public void setDistance() {
         Node a = this.origin;
         Node b = this.destination;
 
@@ -82,8 +81,6 @@ public class Edge {
         deltaY = Math.pow(deltaY, 2);
 
         double sum = deltaX + deltaY;
-        distance = Math.sqrt(sum);
-
-        this.distance = distance;
+        this.distance = Math.sqrt(sum);
     }
 }

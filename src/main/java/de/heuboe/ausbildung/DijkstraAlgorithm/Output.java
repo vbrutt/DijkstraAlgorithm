@@ -22,7 +22,7 @@ public class Output {
         for (int i = 0; i < path.size(); i++) {
             System.out.print(path.get(i).getId() + ",");
         }
-        System.out.println(" \nTotal distance: " + (path.get(path.size() - 1).getDist()) / 1000 + " km"
+        System.out.println(" \nTotal distance: " + (path.get(path.size() - 1).getDistance()) / 1000 + " km"
                 + "\nRoute duration: " + f.format(duration) + " Hours");
     }
 }

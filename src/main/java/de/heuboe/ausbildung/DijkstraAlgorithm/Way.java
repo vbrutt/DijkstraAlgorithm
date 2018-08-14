@@ -42,7 +42,7 @@ public class Way {
     }
 
     private void distanceUpdate(Edge edge, Node node) {
-        if (edge.getDestination().getDistance() > node.getDistance()) {
+        if (edge.getDestination().getSortOfDistance() > node.getSortOfDistance()) {
             edge.getDestination().setDistance(edge, node);
             predecessor.put(edge.getDestination(), edge.getOrigin());
         }
@@ -51,7 +51,7 @@ public class Way {
     private void setDistances(Node node) {
         for (Edge edge : node.getEdges()) {
             if (!(edge.getDestination().isChecked())) {
-                if (edge.getDestination().getDistance().isInfinite()) {
+                if (edge.getDestination().getSortOfDistance().isInfinite()) {
                     edge.getDestination().setDistance(edge, node);
                     predecessor.put(edge.getDestination(), edge.getOrigin());
                 } else {
@@ -62,17 +62,17 @@ public class Way {
     }
 
     /**
-     * @return the node with the smallest duration from the unvisited nodes list
+     * @return the node with the smallest distance from the unvisited nodes list
      */
     private Node getMinimalNode() {
         Double min = null;
         Node minNode = null;
         for (Node node : unvisitedNodes) {
             if (min == null) {
-                min = node.getDistance();
+                min = node.getSortOfDistance();
                 minNode = node;
-            } else if (node.getDistance() < min) {
-                min = node.getDistance();
+            } else if (node.getSortOfDistance() < min) {
+                min = node.getSortOfDistance();
                 minNode = node;
             }
         }
@@ -128,11 +128,11 @@ public class Way {
     /**
      * @param currentNode
      * @return true if the target node is reached and there's no shorter way. Else
-     *         return false and keep running the algorithm
+     *         returns false and keeps running the algorithm
      */
     public boolean canTerminate(Node currentNode) {
         for (Node node : unvisitedNodes) {
-            if (node.getDistance() < currentNode.getDistance()) {
+            if (node.getSortOfDistance() < currentNode.getSortOfDistance()) {
                 return false;
             }
         }
@@ -140,7 +140,7 @@ public class Way {
     }
 
     /**
-     * runs the algorithm until the target node is not found
+     * runs the algorithm until the target node is reached
      * 
      * @return the path as list
      */

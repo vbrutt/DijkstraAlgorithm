@@ -3,7 +3,6 @@ package de.heuboe.ausbildung.DijkstraAlgorithm;
 import java.io.*;
 import java.util.*;
 import java.util.Map.*;
-import java.util.logging.*;
 
 import org.apache.commons.csv.*;
 import org.geotools.referencing.*;
@@ -21,11 +20,6 @@ public class Input2 {
     private static CoordinateTransformer ct;
     private static Map<String, Street> roads = new HashMap<>();
     private static List<Road> finalRoads = new ArrayList<>();
-    
-
-    private Input2() {
-
-    }
 
     /**
      * reads the LCL and fills the net
