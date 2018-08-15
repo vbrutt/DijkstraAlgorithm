@@ -48,6 +48,12 @@ public class Way {
         }
     }
 
+    /**
+     * If the node's neighbours haven't been checked yet, then the distance will be
+     * set as well as the predecessor to this node
+     * 
+     * @param node
+     */
     private void setDistances(Node node) {
         for (Edge edge : node.getEdges()) {
             if (!(edge.getDestination().isChecked())) {

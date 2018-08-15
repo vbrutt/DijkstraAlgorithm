@@ -1,0 +1,141 @@
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building DijkstraAlgorithm 0.0.2
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (prepare-agent) @ DijkstraAlgorithm ---
+[INFO] argLine set to -javaagent:C:\\Users\\verab\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.7.9\\org.jacoco.agent-0.7.9-runtime.jar=destfile=C:\\Users\\verab\\Eclipse-workspace\\DijkstraAlgorithm\\target\\jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ DijkstraAlgorithm ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\src\main\resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.6.1:compile (default-compile) @ DijkstraAlgorithm ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ DijkstraAlgorithm ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\src\test\resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.6.1:testCompile (default-testCompile) @ DijkstraAlgorithm ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.19.1:test (default-test) @ DijkstraAlgorithm ---
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running de.heuboe.ausbildung.DijkstraAlgorithm.MultipleNodesTest
+From: Hamburg-Südost To: München-Ost
+Best way: 10141,10140,10139,10138,10137,10136,10135,12367,12366,12365,12364,12363,54385,54384,12362,54383,54382,12361,12360,54381,54380,12359,12358,54379,13580,54378,54377,12357,54375,12356,12355,54372,12354,54371,54370,12353,54369,12352,12351,54368,12350,12349,54367,12348,54366,54365,12347,12346,54364,18007,12345,12344,12343,54363,12342,12341,12340,12339,12338,54362,12337,12336,12335,12334,12333,54360,12332,54359,12331,54541,12330,12329,17485,12328,54358,12327,54357,12326,12325,13333,54356,12324,12323,12322,12321,54355,54354,12320,38874,54353,12319,59492,59691,12318,12317,12316,12315,12314,12313,59692,59693,12312,39072,12311,12310,59694,59695,12309,12308,12307,12306,12305,59696,59697,12304,59698,59699,12303,59700,59701,12302,59702,59703,59704,59705,12301,59706,59707,53576,59708,59709,12299,59710,59711,59712,59713,12298,59714,59715,60523,60522,12297,60521,60742,60741,12296,60740,12295,60739,60738,60737,60736,60735,12294,60734,60733,12293,60732,60731,60730,60729,60728,12292,60727,60726,12291,60725,60723,60724,12290,60722,60721,12289,60720,60719,60718,12288,60717,60716,60715,60714,12287,10844,60496,10843,10842,60495,60494,10841,60492,60493,60491,60490,10840,60489,60488,60487,60486,10839,60485,60484,10838,60483,10837,60482,10836,60481,60480,10835,60479,60478,60477,60475,60474,10834,60473,60472,10833,10832,10831,10830,60471,10829,10828,10827,10826,12753,60615,12752,12751,12750,12749,60613,12748,60612,12747,60610,12746,12745,12744,60608,12743,60607,12742,12741,12740,12739,7578,12738,7577,12737,60605,12736,60603,60602,12735,12734,12733,60601,60600,12732,60599,60598,12731,12730,12729,60597,60596,12728,12727,12726,12979,12980,60819,12981,12983,12903, 
+Total distance: 753.1536867767419 km
+Route duration: 5,79 Hours
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.364 sec - in de.heuboe.ausbildung.DijkstraAlgorithm.MultipleNodesTest
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:jar (default-jar) @ DijkstraAlgorithm ---
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ DijkstraAlgorithm ---
+[INFO] 
+Loading source files for package de.heuboe.ausbildung.DijkstraAlgorithm...
+Constructing Javadoc information...
+Standard Doclet version 1.8.0_65
+Building tree for all the packages and classes...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\Edge.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\Graph.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\Input2.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\Node.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\Output.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\Road2.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\Way.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\package-frame.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\package-summary.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\package-tree.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\constant-values.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\class-use\Way.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\class-use\Road2.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\class-use\Output.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\class-use\Node.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\class-use\Input2.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\class-use\Graph.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\class-use\Edge.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\de\heuboe\ausbildung\DijkstraAlgorithm\package-use.html...
+Building index for all the packages and classes...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\overview-tree.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\index-all.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\deprecated-list.html...
+Building index for all classes...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\allclasses-frame.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\allclasses-noframe.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\index.html...
+Generating C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\apidocs\help-doc.html...
+10 warnings
+[WARNING] Javadoc Warnings
+[WARNING] C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\src\main\java\de\heuboe\ausbildung\DijkstraAlgorithm\Graph.java:18: warning: no description for @param
+[WARNING] * @param nodes
+[WARNING] ^
+[WARNING] C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\src\main\java\de\heuboe\ausbildung\DijkstraAlgorithm\Graph.java:19: warning: no description for @param
+[WARNING] * @param edges
+[WARNING] ^
+[WARNING] C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\src\main\java\de\heuboe\ausbildung\DijkstraAlgorithm\Input2.java:30: warning: no description for @throws
+[WARNING] * @throws FactoryException
+[WARNING] ^
+[WARNING] C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\src\main\java\de\heuboe\ausbildung\DijkstraAlgorithm\Input2.java:31: warning: no description for @throws
+[WARNING] * @throws IOException
+[WARNING] ^
+[WARNING] C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\src\main\java\de\heuboe\ausbildung\DijkstraAlgorithm\Node.java:130: warning: no description for @param
+[WARNING] * @param edge
+[WARNING] ^
+[WARNING] C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\src\main\java\de\heuboe\ausbildung\DijkstraAlgorithm\Node.java:131: warning: no description for @param
+[WARNING] * @param node
+[WARNING] ^
+[WARNING] C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\src\main\java\de\heuboe\ausbildung\DijkstraAlgorithm\Node.java:151: warning: no description for @param
+[WARNING] * @param distanceValue
+[WARNING] ^
+[WARNING] C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\src\main\java\de\heuboe\ausbildung\DijkstraAlgorithm\Output.java:13: warning: no description for @param
+[WARNING] * @param path
+[WARNING] ^
+[WARNING] C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\src\main\java\de\heuboe\ausbildung\DijkstraAlgorithm\Output.java:14: warning: no description for @param
+[WARNING] * @param duration
+[WARNING] ^
+[WARNING] C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\src\main\java\de\heuboe\ausbildung\DijkstraAlgorithm\Way.java:135: warning: no description for @param
+[WARNING] * @param currentNode
+[WARNING] ^
+[INFO] Building jar: C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\DijkstraAlgorithm-0.0.2-javadoc.jar
+[INFO] 
+[INFO] >>> maven-source-plugin:3.0.1:jar (attach-sources) > generate-sources @ DijkstraAlgorithm >>>
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (prepare-agent) @ DijkstraAlgorithm ---
+[INFO] argLine set to -javaagent:C:\\Users\\verab\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.7.9\\org.jacoco.agent-0.7.9-runtime.jar=destfile=C:\\Users\\verab\\Eclipse-workspace\\DijkstraAlgorithm\\target\\jacoco.exec
+[INFO] 
+[INFO] <<< maven-source-plugin:3.0.1:jar (attach-sources) < generate-sources @ DijkstraAlgorithm <<<
+[INFO] 
+[INFO] --- maven-source-plugin:3.0.1:jar (attach-sources) @ DijkstraAlgorithm ---
+[INFO] Building jar: C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\DijkstraAlgorithm-0.0.2-sources.jar
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent-integration (prepare-agent-integration) @ DijkstraAlgorithm ---
+[INFO] argLine set to -javaagent:C:\\Users\\verab\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.7.9\\org.jacoco.agent-0.7.9-runtime.jar=destfile=C:\\Users\\verab\\Eclipse-workspace\\DijkstraAlgorithm\\target\\jacoco-it.exec
+[INFO] 
+[INFO] --- maven-failsafe-plugin:2.19.1:integration-test (default) @ DijkstraAlgorithm ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- maven-failsafe-plugin:2.19.1:verify (default) @ DijkstraAlgorithm ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ DijkstraAlgorithm ---
+[INFO] Installing C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\DijkstraAlgorithm-0.0.2.jar to C:\Users\verab\.m2\repository\de\heuboe\ausbildung\DijkstraAlgorithm\0.0.2\DijkstraAlgorithm-0.0.2.jar
+[INFO] Installing C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\pom.xml to C:\Users\verab\.m2\repository\de\heuboe\ausbildung\DijkstraAlgorithm\0.0.2\DijkstraAlgorithm-0.0.2.pom
+[INFO] Installing C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\DijkstraAlgorithm-0.0.2-javadoc.jar to C:\Users\verab\.m2\repository\de\heuboe\ausbildung\DijkstraAlgorithm\0.0.2\DijkstraAlgorithm-0.0.2-javadoc.jar
+[INFO] Installing C:\Users\verab\Eclipse-workspace\DijkstraAlgorithm\target\DijkstraAlgorithm-0.0.2-sources.jar to C:\Users\verab\.m2\repository\de\heuboe\ausbildung\DijkstraAlgorithm\0.0.2\DijkstraAlgorithm-0.0.2-sources.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 13.279 s
+[INFO] Finished at: 2018-08-14T12:16:24+02:00
+[INFO] Final Memory: 15M/59M
+[INFO] ------------------------------------------------------------------------

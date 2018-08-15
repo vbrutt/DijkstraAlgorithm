@@ -9,16 +9,13 @@ import de.heuboe.ausbildung.subwayPlan.process.*;
  *
  */
 public class Edge {
-
     private Node origin;
     private Node destination;
-    private String id;
-
     private double distance;
     private double speedLimit;
 
     /**
-     * creates an edge from the origin node to the destination node
+     * creates an edge, that has an origin node and a destination node
      * 
      * @param origin
      *            node
@@ -44,14 +41,6 @@ public class Edge {
 
     public void setDestination(Node destination) {
         this.destination = destination;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public double getSpeedLimit() {

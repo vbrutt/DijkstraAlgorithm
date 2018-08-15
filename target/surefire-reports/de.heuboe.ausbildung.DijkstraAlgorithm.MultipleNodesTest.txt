@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: de.heuboe.ausbildung.DijkstraAlgorithm.MultipleNodesTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.364 sec - in de.heuboe.ausbildung.DijkstraAlgorithm.MultipleNodesTest

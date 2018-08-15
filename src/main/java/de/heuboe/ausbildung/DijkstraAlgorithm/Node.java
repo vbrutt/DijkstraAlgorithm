@@ -14,7 +14,6 @@ import de.heuboe.ausbildung.subwayPlan.interfaces.*;
  *
  */
 public class Node {
-
     private String id;
     private List<Edge> edges = new ArrayList<>();
     private Double distance;

@@ -2,9 +2,9 @@ package de.heuboe.ausbildung.DijkstraAlgorithm;
 
 public class Road2 {
 
-    private int a1 = 130; // Autobahn
-    private int b1 = 100; // Bundesstraße
-    private int b2 = 50; // Landesstraße
+    private final int a1 = 130; // Autobahn
+    private final int b1 = 100; // Bundesstraße
+    private final int b2 = 50; // Landesstraße
 
     public int getSpeedLimit(String roadType) {
         if (("L1.1").equals(roadType) || roadType.startsWith("P")) {
