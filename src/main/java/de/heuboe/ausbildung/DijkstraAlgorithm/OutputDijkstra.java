@@ -21,15 +21,15 @@ public class OutputDijkstra {
     private static String srid = "" + iSrid;
     private static GeometryFactory geoFactory = new DefaultGeometryFactory();
 
-    public static void writePointsToShp(Coordinate[] points, String path) {
+    private static void writePointsToShp(Coordinate[] points, String path) {
         new ShpFactory();
         Factory factory = Factory.Singleton.getInstance();
         Map<String, Type> members = new LinkedHashMap<String, Type>();
 
         members.put("ID", factory.getStringType(64));
         Type type = factory.getType("shp", "Shapefiles", members, "", "");
-        Properties props = new Properties();
 
+        Properties props = new Properties();
         String geotype = "MULTI_POLYLINE";
         props.put("de.heuboe.data.shp.geotype", geotype);
         props.put("de.heuboe.data.shp.srid", srid);
@@ -39,7 +39,7 @@ public class OutputDijkstra {
         for (int i = 1; i < points.length; i++) {
             GeoData record = (GeoData) type.createData();
             // Attribute
-            record.getMember("ID").setFromString((i - 1) + ":" + i);
+            // record.getMember("ID").setFromString((i - 1) + ":" + i);
             // Koordinaten
             List<Coordinate> coordinates = new ArrayList<Coordinate>();
             coordinates.add(points[i - 1]);
@@ -74,5 +74,4 @@ public class OutputDijkstra {
         // schreiben
         writePointsToShp(coords, path);
     }
-
 }

@@ -35,11 +35,11 @@ public class OutputLCL {
         members.put("RoadNo", factory.getStringType(64));
         members.put("LocCode", factory.getStringType(64));
         members.put("Type", factory.getStringType(64));
-        type = factory.getType("shp", "Linie", members, "", ""); // Warum sind die key indexes "random" gemacht?
+        type = factory.getType("shp", "Shapefiles", members, "", ""); // Warum sind die key indexes "random" gemacht?
 
         Properties props = new Properties();
         props.put("de.heuboe.data.shp.geotype", "MULTI_POLYLINE");
-        props.put("de.heuboe.data.shp.srid", "" + dstSrid); // "Art" des Koordinatensystems
+        props.put("de.heuboe.data.shp.srid", "" + 31463); // "Art" des Koordinatensystems
 
         DataStore store = factory.createNewDataStore(type, path, props);
         writer = store.getWriter();
@@ -78,7 +78,7 @@ public class OutputLCL {
                 coordinates.add(twist(coords[1]));
             }
 
-            Geometry line = geoFactory.createPolyline(coordinates, dstSrid);
+            Geometry line = geoFactory.createPolyline(coordinates, 31463);
             record.setGeometry(line);
             writer.add(record);
         }

@@ -57,7 +57,7 @@ public class Input2 {
     }
 
     /**
-     * adds the edge(s) to their nodes
+     * adds the edge(s) to their node
      * 
      * @param nodeList
      *            list with all the nodes
