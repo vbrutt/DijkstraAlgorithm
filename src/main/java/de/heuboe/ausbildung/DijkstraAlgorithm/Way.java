@@ -17,7 +17,7 @@ public class Way {
     public Way(String initialNodeId, String targetNodeId, int n) throws IOException, FactoryException {
         Node.setGeneralDistance(n);
 
-        Graph graph = Input2.getNetFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
+        Graph graph = Input.getNetFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
         this.initialNode = getNode(initialNodeId);
         this.targetNode = getNode(targetNodeId);
         this.edges = graph.getEdges();
@@ -32,7 +32,7 @@ public class Way {
         this.duration = duration;
     }
 
-    public Node getNode(String id) {
+    private Node getNode(String id) {
         Node node = Node.nodes.get(id);
         if (node == null) {
             node = new Node(id);
@@ -42,7 +42,7 @@ public class Way {
     }
 
     private void distanceUpdate(Edge edge, Node node) {
-        if (edge.getDestination().getSortOfDistance() > node.getSortOfDistance()) {
+        if (edge.getDestination().getDistanceType() > node.getDistanceType()) {
             edge.getDestination().setDistance(edge, node);
             predecessor.put(edge.getDestination(), edge.getOrigin());
         }
@@ -57,7 +57,7 @@ public class Way {
     private void setDistances(Node node) {
         for (Edge edge : node.getEdges()) {
             if (!(edge.getDestination().isChecked())) {
-                if (edge.getDestination().getSortOfDistance().isInfinite()) {
+                if (edge.getDestination().getDistanceType().isInfinite()) {
                     edge.getDestination().setDistance(edge, node);
                     predecessor.put(edge.getDestination(), edge.getOrigin());
                 } else {
@@ -75,10 +75,10 @@ public class Way {
         Node minNode = null;
         for (Node node : unvisitedNodes) {
             if (min == null) {
-                min = node.getSortOfDistance();
+                min = node.getDistanceType();
                 minNode = node;
-            } else if (node.getSortOfDistance() < min) {
-                min = node.getSortOfDistance();
+            } else if (node.getDistanceType() < min) {
+                min = node.getDistanceType();
                 minNode = node;
             }
         }
@@ -136,9 +136,9 @@ public class Way {
      * @return true if the target node is reached and there's no shorter way. Else
      *         returns false and keeps running the algorithm
      */
-    public boolean canTerminate(Node currentNode) {
+    private boolean canTerminate(Node currentNode) {
         for (Node node : unvisitedNodes) {
-            if (node.getSortOfDistance() < currentNode.getSortOfDistance()) {
+            if (node.getDistanceType() < currentNode.getDistanceType()) {
                 return false;
             }
         }

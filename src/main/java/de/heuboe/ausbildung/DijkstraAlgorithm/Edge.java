@@ -12,7 +12,7 @@ public class Edge {
     private Node origin;
     private Node destination;
     private double distance;
-    private double speedLimit;
+    private static final int SPEEDLIMIT = 130;
 
     /**
      * creates an edge, that has an origin node and a destination node
@@ -43,15 +43,8 @@ public class Edge {
         this.destination = destination;
     }
 
-    public double getSpeedLimit() {
-        Road2 r = new Road2();
-        double limit = r.getSpeedLimit(origin.getRoadType());
-        setSpeedLimit(limit);
-        return speedLimit;
-    }
-
-    public void setSpeedLimit(double speedLimit) {
-        this.speedLimit = speedLimit;
+    public int getSpeedLimit() {
+        return SPEEDLIMIT;
     }
 
     public double getDistance() {

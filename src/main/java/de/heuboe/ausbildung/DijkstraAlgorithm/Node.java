@@ -23,9 +23,8 @@ public class Node {
     private List<String> neighbours = new ArrayList<>();
     private List<String> intersections = new ArrayList<>();
     private boolean checked;
-    private String roadType;
     private String name;
-    private static int generalDistance;
+    private static int distanceType;
 
     protected static Map<String, Node> nodes = new HashMap<>();
 
@@ -43,7 +42,6 @@ public class Node {
         this.id = record.get("LOCATION CODE");
         setNeighbours(StringUtils.stripStart(record.get("POSITIVE OFFSET"), "0"));
         setNeighbours(StringUtils.stripStart(record.get("NEGATIVE OFFSET"), "0"));
-        setRoadType(record.get("(SUB)TYPE"));
         setChecked(false);
         if (!("").equals(record.get("INTERSECTION REFS"))) {
             setIntersections(record.get("INTERSECTION REFS"));
@@ -93,11 +91,11 @@ public class Node {
     }
 
     public static void setGeneralDistance(int i) {
-        generalDistance = i;
+        distanceType = i;
     }
 
-    public Double getSortOfDistance() {
-        switch (generalDistance) {
+    public Double getDistanceType() {
+        switch (distanceType) {
         case 1:
             return getDistance();
         case 2:
@@ -131,7 +129,7 @@ public class Node {
      * @param node
      */
     public void setDistance(Edge edge, Node node) {
-        switch (generalDistance) {
+        switch (distanceType) {
         case 1:
             shortestDistance(edge, node);
             break;
@@ -151,7 +149,7 @@ public class Node {
      * @param distanceValue
      */
     public void setDistance(double distanceValue) {
-        switch (generalDistance) {
+        switch (distanceType) {
         case 1:
             this.distance = distanceValue;
             break;
@@ -204,14 +202,6 @@ public class Node {
         for (String string : intersectionLocCodes) {
             this.intersections.add(string);
         }
-    }
-
-    public String getRoadType() {
-        return roadType;
-    }
-
-    public void setRoadType(String roadType) {
-        this.roadType = roadType;
     }
 
     public String getName() {
