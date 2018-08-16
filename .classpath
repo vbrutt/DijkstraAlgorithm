@@ -27,41 +27,6 @@
 	<classpathentry kind="lib" path="C:/Users/verab/.m2/repository/com/vividsolutions/jts/1.12/jts-1.12-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/verab/.m2/repository/de/heuboe/map/map-base/3.1.0/map-base-3.1.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/verab/.m2/repository/de/heuboe/map/map-base/3.1.0/map-base-3.1.0-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Users/verab/.m2/repository/de/heuboe/ausbildung/netzplan/Netzplan/0.1.0/Netzplan-0.1.0.jar" sourcepath="C:/Users/verab/.m2/repository/de/heuboe/ausbildung/netzplan/Netzplan/0.1.0/Netzplan-0.1.0-sources.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="de.heuboe.ausbildung.netzplan"/>
-			<attribute name="maven.artifactId" value="Netzplan"/>
-			<attribute name="maven.version" value="0.1.0"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/verab/.m2/repository/de/heuboe/ausbildung/netzplan/NetzplanEingabe/0.0.12/NetzplanEingabe-0.0.12.jar" sourcepath="C:/Users/verab/.m2/repository/de/heuboe/ausbildung/netzplan/NetzplanEingabe/0.0.12/NetzplanEingabe-0.0.12-sources.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="de.heuboe.ausbildung.netzplan"/>
-			<attribute name="maven.artifactId" value="NetzplanEingabe"/>
-			<attribute name="maven.version" value="0.0.12"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/verab/.m2/repository/de/heuboe/ausbildung/netzplan/verarbeitung/Verarbeitung/0.0.5/Verarbeitung-0.0.5.jar" sourcepath="C:/Users/verab/.m2/repository/de/heuboe/ausbildung/netzplan/verarbeitung/Verarbeitung/0.0.5/Verarbeitung-0.0.5-sources.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="de.heuboe.ausbildung.netzplan.verarbeitung"/>
-			<attribute name="maven.artifactId" value="Verarbeitung"/>
-			<attribute name="maven.version" value="0.0.5"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/verab/.m2/repository/de/heuboe/ausbildung/netzplan/Implemitation/0.0.1/Implemitation-0.0.1.jar" sourcepath="C:/Users/verab/.m2/repository/de/heuboe/ausbildung/netzplan/Implemitation/0.0.1/Implemitation-0.0.1-sources.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="de.heuboe.ausbildung.netzplan"/>
-			<attribute name="maven.artifactId" value="Implemitation"/>
-			<attribute name="maven.version" value="0.0.1"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/verab/.m2/repository/de/heuboe/ausbildung/netzplan/NetzplanEingabe/0.0.12/NetzplanEingabe-0.0.12.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

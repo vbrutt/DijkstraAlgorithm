@@ -5,10 +5,15 @@ import java.util.*;
 
 import org.opengis.referencing.*;
 
+//TODO Mit der unvisitedNodes Liste als "normale" nodes Liste wird die Ausgabe nicht richtig gemacht. Ich habe diese unvisitedNodes List für eine visitedNodes Liste
+// ersetzt, aber es funktioniert trotzdem nicht.... 
+
+
 public class Way {
-    private List<Edge> edges = new ArrayList<>();
-    private List<Node> unvisitedNodes = new ArrayList<>();
-    private Map<Node, Node> predecessor = new HashMap<>();
+    // private List<Edge> edges = new ArrayList<>();
+    private List<Node> nodes = new ArrayList<>();
+    private List<Node> visitedNodes = new ArrayList<>();
+    private Map<Node, Edge> predecessor = new HashMap<>();
     private Map<String, Node> nodeMap = new HashMap<>();
     private Node targetNode;
     private Node initialNode;
@@ -20,8 +25,9 @@ public class Way {
         Graph graph = Input.getNetFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
         this.initialNode = getNode(initialNodeId);
         this.targetNode = getNode(targetNodeId);
-        this.edges = graph.getEdges();
-        this.unvisitedNodes = graph.getNodes();
+        // this.edges = graph.getEdges();
+        this.nodes = graph.getNodes();
+        // this.visitedNodes.add(initialNode);
     }
 
     public double getDuration() {
@@ -44,7 +50,8 @@ public class Way {
     private void distanceUpdate(Edge edge, Node node) {
         if (edge.getDestination().getDistanceType() > node.getDistanceType()) {
             edge.getDestination().setDistance(edge, node);
-            predecessor.put(edge.getDestination(), edge.getOrigin());
+            predecessor.put(edge.getDestination(), edge);
+            visitedNodes.add(edge.getDestination());
         }
     }
 
@@ -59,7 +66,8 @@ public class Way {
             if (!(edge.getDestination().isChecked())) {
                 if (edge.getDestination().getDistanceType().isInfinite()) {
                     edge.getDestination().setDistance(edge, node);
-                    predecessor.put(edge.getDestination(), edge.getOrigin());
+                    predecessor.put(edge.getDestination(), edge);
+                    visitedNodes.add(edge.getDestination());
                 } else {
                     distanceUpdate(edge, node);
                 }
@@ -73,11 +81,8 @@ public class Way {
     private Node getMinimalNode() {
         Double min = null;
         Node minNode = null;
-        for (Node node : unvisitedNodes) {
-            if (min == null) {
-                min = node.getDistanceType();
-                minNode = node;
-            } else if (node.getDistanceType() < min) {
+        for (Node node : visitedNodes) {
+            if (min == null || node.getDistanceType() < min) {
                 min = node.getDistanceType();
                 minNode = node;
             }
@@ -90,30 +95,22 @@ public class Way {
      * The initial node's distance and duration are set to 0.0
      */
     private void initialize() {
-        for (Node node : unvisitedNodes) {
+        for (Node node : nodes) {
             node.setDistance(Double.POSITIVE_INFINITY);
             predecessor.put(node, null);
         }
         initialNode.setDistance(0.0);
-    }
-
-    private Edge getEdge(Node origin, Node destination) {
-        for (Edge edge : edges) {
-            if (edge.getOrigin() == origin && edge.getDestination() == destination
-                    || edge.getOrigin() == destination && edge.getDestination() == origin) {
-                return edge;
-            }
-        }
-        throw new RuntimeException("Edge doesn't exist");
+        visitedNodes.add(initialNode);
     }
 
     private void calculateRouteDuration(List<Node> path) {
         for (int i = 0; i < path.size() - 1; i++) {
-            Edge e = getEdge(path.get(i), path.get(i + 1));
+            Edge e = predecessor.get(path.get(i + 1));
             setDuration(getDuration() + ((e.getDistance() / 1000) / e.getSpeedLimit()));
         }
     }
 
+    // 84788 VS 114411
     private List<Node> buildPath() {
         Node node = targetNode;
         List<Node> path = new ArrayList<>();
@@ -121,9 +118,9 @@ public class Way {
 
         double distance = 0;
         while (predecessor.get(node) != null) {
-            Edge edge = getEdge(predecessor.get(node), node);
+            Edge edge = predecessor.get(node);
             distance += edge.getDistance();
-            node = predecessor.get(node);
+            node = edge.getOrigin();
             path.add(0, node);
         }
         path.get(path.size() - 1).setDist(distance);
@@ -137,7 +134,7 @@ public class Way {
      *         returns false and keeps running the algorithm
      */
     private boolean canTerminate(Node currentNode) {
-        for (Node node : unvisitedNodes) {
+        for (Node node : visitedNodes) {
             if (node.getDistanceType() < currentNode.getDistanceType()) {
                 return false;
             }
@@ -153,15 +150,15 @@ public class Way {
     public List<Node> run() {
         initialize();
 
-        while (!(unvisitedNodes.isEmpty())) {
+        while (!(visitedNodes.isEmpty())) {
             Node currentNode = getMinimalNode();
-            unvisitedNodes.remove(currentNode);
+            visitedNodes.remove(currentNode);
             if (currentNode != null && !(currentNode == targetNode && canTerminate(currentNode))) {
                 setDistances(currentNode);
                 currentNode.setChecked(true);
                 continue;
             }
-            unvisitedNodes.clear();
+            visitedNodes.clear();
         }
         return buildPath();
     }
