@@ -23,7 +23,6 @@ public class Node {
     private List<String> neighbours = new ArrayList<>();
     private List<String> intersections = new ArrayList<>();
     private boolean checked;
-    private String name;
     private static int distanceType;
 
     protected static Map<String, Node> nodes = new HashMap<>();
@@ -48,7 +47,6 @@ public class Node {
         }
         this.xCoord = junction.getX();
         this.yCoord = junction.getY();
-        setName(record.get("FIRST NAME"));
     }
 
     public static Node getNode(String id, Junction junction) {
@@ -202,13 +200,5 @@ public class Node {
         for (String string : intersectionLocCodes) {
             this.intersections.add(string);
         }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

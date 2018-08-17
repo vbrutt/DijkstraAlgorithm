@@ -5,12 +5,7 @@ import java.util.*;
 
 import org.opengis.referencing.*;
 
-//TODO Mit der unvisitedNodes Liste als "normale" nodes Liste wird die Ausgabe nicht richtig gemacht. Ich habe diese unvisitedNodes List für eine visitedNodes Liste
-// ersetzt, aber es funktioniert trotzdem nicht.... 
-
-
 public class Way {
-    // private List<Edge> edges = new ArrayList<>();
     private List<Node> nodes = new ArrayList<>();
     private List<Node> visitedNodes = new ArrayList<>();
     private Map<Node, Edge> predecessor = new HashMap<>();
@@ -25,9 +20,12 @@ public class Way {
         Graph graph = Input.getNetFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
         this.initialNode = getNode(initialNodeId);
         this.targetNode = getNode(targetNodeId);
-        // this.edges = graph.getEdges();
         this.nodes = graph.getNodes();
-        // this.visitedNodes.add(initialNode);
+        this.visitedNodes.add(initialNode);
+    }
+
+    public Node getTargetNode() {
+        return targetNode;
     }
 
     public double getDuration() {
@@ -100,7 +98,6 @@ public class Way {
             predecessor.put(node, null);
         }
         initialNode.setDistance(0.0);
-        visitedNodes.add(initialNode);
     }
 
     private void calculateRouteDuration(List<Node> path) {
@@ -115,7 +112,7 @@ public class Way {
         Node node = targetNode;
         List<Node> path = new ArrayList<>();
         path.add(node);
-
+        
         double distance = 0;
         while (predecessor.get(node) != null) {
             Edge edge = predecessor.get(node);
@@ -139,6 +136,7 @@ public class Way {
                 return false;
             }
         }
+        targetNode.setChecked(true);
         return true;
     }
 
