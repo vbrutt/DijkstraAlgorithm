@@ -107,12 +107,11 @@ public class Way {
         }
     }
 
-    // 84788 VS 114411
     private List<Node> buildPath() {
         Node node = targetNode;
         List<Node> path = new ArrayList<>();
         path.add(node);
-        
+
         double distance = 0;
         while (predecessor.get(node) != null) {
             Edge edge = predecessor.get(node);
