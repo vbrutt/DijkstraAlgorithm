@@ -12,7 +12,7 @@ public class Edge {
     private Node origin;
     private Node destination;
     private double distance;
-    private static final int SPEEDLIMIT = 130;
+    protected static final int SPEEDLIMIT = 130;
 
     /**
      * creates an edge, that has an origin node and a destination node

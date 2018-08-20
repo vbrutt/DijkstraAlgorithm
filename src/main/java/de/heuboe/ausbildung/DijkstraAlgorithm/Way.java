@@ -9,10 +9,10 @@ public class Way {
     private List<Node> nodes = new ArrayList<>();
     private List<Node> visitedNodes = new ArrayList<>();
     private Map<Node, Edge> predecessor = new HashMap<>();
-    private Map<String, Node> nodeMap = new HashMap<>();
     private Node targetNode;
     private Node initialNode;
     private double duration;
+    private double distance;
 
     public Way(String initialNodeId, String targetNodeId, int n) throws IOException, FactoryException {
         Node.setGeneralDistance(n);
@@ -21,7 +21,6 @@ public class Way {
         this.initialNode = getNode(initialNodeId);
         this.targetNode = getNode(targetNodeId);
         this.nodes = graph.getNodes();
-        this.visitedNodes.add(initialNode);
     }
 
     public Node getTargetNode() {
@@ -29,6 +28,7 @@ public class Way {
     }
 
     public double getDuration() {
+        setDuration((getDistance() / 1000) / Edge.SPEEDLIMIT);
         return duration;
     }
 
@@ -36,11 +36,19 @@ public class Way {
         this.duration = duration;
     }
 
+    public double getDistance() {
+        setDistance(predecessor.get(targetNode).getDestination().getDistance());
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
     private Node getNode(String id) {
         Node node = Node.nodes.get(id);
         if (node == null) {
             node = new Node(id);
-            nodeMap.put(id, node);
         }
         return node;
     }
@@ -98,13 +106,8 @@ public class Way {
             predecessor.put(node, null);
         }
         initialNode.setDistance(0.0);
-    }
+        visitedNodes.add(initialNode);
 
-    private void calculateRouteDuration(List<Node> path) {
-        for (int i = 0; i < path.size() - 1; i++) {
-            Edge e = predecessor.get(path.get(i + 1));
-            setDuration(getDuration() + ((e.getDistance() / 1000) / e.getSpeedLimit()));
-        }
     }
 
     private List<Node> buildPath() {
@@ -112,15 +115,11 @@ public class Way {
         List<Node> path = new ArrayList<>();
         path.add(node);
 
-        double distance = 0;
         while (predecessor.get(node) != null) {
             Edge edge = predecessor.get(node);
-            distance += edge.getDistance();
             node = edge.getOrigin();
             path.add(0, node);
         }
-        path.get(path.size() - 1).setDist(distance);
-        calculateRouteDuration(path);
         return path;
     }
 

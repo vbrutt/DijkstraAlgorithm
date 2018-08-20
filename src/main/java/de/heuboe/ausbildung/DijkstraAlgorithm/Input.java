@@ -82,12 +82,11 @@ public class Input {
             for (String id : node.getIntersections()) {
                 if (!(id.equals(node.getId()))) {
                     Node node1 = Node.nodes.get(id);
-                    if (node1 == null) {
-                        continue;
+                    if (node1 != null) {
+                        Edge edge = new Edge(node, node1);
+                        node.addEdge(edge);
+                        allEdges.add(edge);
                     }
-                    Edge edge = new Edge(node, node1);
-                    node.addEdge(edge);
-                    allEdges.add(edge);
                 }
             }
         }
