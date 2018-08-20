@@ -3,6 +3,7 @@ package de.heuboe.ausbildung.DijkstraAlgorithm;
 import java.io.*;
 import java.util.*;
 
+import org.geotools.referencing.operation.transform.*;
 import org.opengis.referencing.*;
 
 public class Way {
