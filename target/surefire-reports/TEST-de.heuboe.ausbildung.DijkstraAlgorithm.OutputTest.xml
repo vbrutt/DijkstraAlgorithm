@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="26.646" tests="4" errors="0" skipped="0" failures="1">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="29.981" tests="5" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files (x86)\Java\jdk1.8.0_65\jre\bin"/>
@@ -62,12 +62,9 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
   </properties>
-  <testcase name="outputLCL" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="3.744"/>
-  <testcase name="andereRichtung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="4.04"/>
-  <testcase name="keineVerbindung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="2.168">
-    <failure message="Zwischen Start- und Endknoten ist keine Verbindung möglich" type="java.lang.AssertionError">java.lang.AssertionError: Zwischen Start- und Endknoten ist keine Verbindung möglich
-	at de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest.keineVerbindung(OutputTest.java:50)
-</failure>
-  </testcase>
-  <testcase name="outputDijkstra" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="16.584"/>
+  <testcase name="outputLCL" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="3.721"/>
+  <testcase name="dijkstraTEST" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="1.89"/>
+  <testcase name="andereRichtung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="4.756"/>
+  <testcase name="keineVerbindung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="2.257"/>
+  <testcase name="outputDijkstra" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="17.266"/>
 </testsuite>

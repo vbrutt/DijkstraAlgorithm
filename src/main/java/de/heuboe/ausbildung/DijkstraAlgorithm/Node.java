@@ -6,6 +6,7 @@ import org.apache.commons.csv.*;
 import org.apache.commons.lang.*;
 
 import de.heuboe.ausbildung.subwayPlan.interfaces.*;
+import de.heuboe.ausbildung.subwayPlan.process.*;
 
 /**
  * @author verab
@@ -24,6 +25,7 @@ public class Node {
     private List<String> intersections = new ArrayList<>();
     private boolean checked;
     private static int distanceType;
+    private double distanceTarget;
 
     protected static Map<String, Node> nodes = new HashMap<>();
 
@@ -116,7 +118,7 @@ public class Node {
     }
 
     public void quickestDistance(Edge edge, Node node) {
-        edge.getDestination().setDistance((edge.getDistance() / edge.getSpeedLimit()) + node.getDuration());
+        edge.getDestination().setDistance((edge.getDistance() / Edge.SPEEDLIMIT) + node.getDuration());
     }
 
     /**
@@ -201,4 +203,39 @@ public class Node {
             this.intersections.add(string);
         }
     }
+
+    public double getDistanceTarget() {
+        return distanceTarget;
+    }
+
+    /**
+     * sets the distance value from the current node to the target node
+     * 
+     * @param a
+     *            current node
+     * @param b
+     *            target node
+     */
+    public void setDistanceTarget(Node a, Node b) {
+        this.distanceTarget = setDistance(a, b);
+    }
+
+    /**
+     * calculates the direct distance between the current node and the target node
+     * 
+     * @param a node1
+     * @param b node2
+     * @return distance
+     */
+    public static double setDistance(Node a, Node b) {
+        double deltaX = Tools.getDelta(a.getX(), b.getX());
+        double deltaY = Tools.getDelta(a.getY(), b.getY());
+
+        deltaX = Math.pow(deltaX, 2);
+        deltaY = Math.pow(deltaY, 2);
+
+        double sum = deltaX + deltaY;
+        return Math.sqrt(sum);
+    }
+
 }

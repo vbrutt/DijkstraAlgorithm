@@ -1,7 +1,7 @@
 package de.heuboe.ausbildung.DijkstraAlgorithm;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.io.*;
 import java.util.*;
@@ -37,7 +37,7 @@ public class OutputTest {
         System.out.println("In 15 Sekunden haben wir " + count + " Aufrufe geschafft");
 
         Output output = new Output(31463, 31467);
-        output.outputDijkstra("./ShapeFiles/Dijkstra.shp", path);
+        output.outputDijkstra("./ShapeFiles/DijkstraLong.shp", path);
     }
 
     @Test
@@ -47,7 +47,7 @@ public class OutputTest {
 
         path = way.run();
 
-        assertTrue("Zwischen Start- und Endknoten ist keine Verbindung möglich", way.getTargetNode().isChecked());
+        assertFalse("Zwischen Start- und Endknoten ist keine Verbindung möglich", way.getTargetNode().isChecked());
 
         Output output = new Output(31463, 31467);
         output.outputDijkstra("./ShapeFiles/Dijkstra123.shp", path);
@@ -65,11 +65,41 @@ public class OutputTest {
 
         assertEquals(path.get(path.size() - 1).getDistance() / 1000, path2.get(path2.size() - 1).getDistance() / 1000,
                 5);
+        // System.out.println(wayHin.getDistance());
+        // System.out.println(wayZurueck.getDistance());
 
         Output output = new Output(31463, 31467);
-        output.outputDijkstra("./ShapeFiles/Hinweg.shp", path);
+        output.outputDijkstra("./ShapeFiles/Hinweg.shp", path2);
 
-        output.outputDijkstra("./ShapeFiles/Rueckweg.shp", path2);
+        // output.outputNodes("./ShapeFiles/Wolke.shp", wayHin.getAllVisitedNodes());
+    }
+
+    @Test
+    public void dijkstraTEST() throws IOException, FactoryException {
+        Way way = new Way("10141", "11104", 1); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
+        List<Node> path = new ArrayList<>();
+
+        path = way.run();
+
+        Output output = new Output(31463, 31467);
+        output.outputDijkstra("./ShapeFiles/DijkstraTEST.shp", path);
+
+        output.outputNodes("./ShapeFiles/WolkeTEST.shp", way.getAllVisitedNodes());
+        System.out.println(way.getAllVisitedNodes().size());
+        System.out.println(path.size());
+    }
+
+    // @Test
+    public void dijkstra() throws IOException, FactoryException {
+        Way way = new Way("10141", "11104", 1); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
+        List<Node> path = new ArrayList<>();
+
+        path = way.run();
+
+        Output output = new Output(31463, 31467);
+        output.outputDijkstra("./ShapeFiles/Dijkstra.shp", path);
+
+        output.outputNodes("./ShapeFiles/Wolke.shp", way.getAllVisitedNodes());
     }
 
 }

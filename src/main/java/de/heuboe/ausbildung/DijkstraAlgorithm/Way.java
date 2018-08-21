@@ -8,6 +8,7 @@ import org.opengis.referencing.*;
 public class Way {
     private List<Node> nodes = new ArrayList<>();
     private List<Node> visitedNodes = new ArrayList<>();
+    private Set<Node> allVisitedNodes = new HashSet<>();
     private Map<Node, Edge> predecessor = new HashMap<>();
     private Node targetNode;
     private Node initialNode;
@@ -21,6 +22,7 @@ public class Way {
         this.initialNode = getNode(initialNodeId);
         this.targetNode = getNode(targetNodeId);
         this.nodes = graph.getNodes();
+        System.out.println("Knoten: " + nodes.size());
     }
 
     public Node getTargetNode() {
@@ -54,10 +56,12 @@ public class Way {
     }
 
     private void distanceUpdate(Edge edge, Node node) {
-        if (edge.getDestination().getDistanceType() > node.getDistanceType()) {
+        if (edge.getDestination().getDistanceTarget() > node.getDistanceTarget()) {
+            // if(edge.getDestination().getDistanceType() > node.getDistanceType()) {
             edge.getDestination().setDistance(edge, node);
             predecessor.put(edge.getDestination(), edge);
             visitedNodes.add(edge.getDestination());
+            allVisitedNodes.add(edge.getDestination());
         }
     }
 
@@ -71,9 +75,14 @@ public class Way {
         for (Edge edge : node.getEdges()) {
             if (!(edge.getDestination().isChecked())) {
                 if (edge.getDestination().getDistanceType().isInfinite()) {
+                    edge.getDestination().setDistanceTarget(edge.getDestination(), targetNode);
+                    if (edge.getDestination().getDistanceTarget() > node.getDistanceTarget()) {
+                        continue;
+                    }
                     edge.getDestination().setDistance(edge, node);
                     predecessor.put(edge.getDestination(), edge);
                     visitedNodes.add(edge.getDestination());
+                    allVisitedNodes.add(edge.getDestination());
                 } else {
                     distanceUpdate(edge, node);
                 }
@@ -88,9 +97,11 @@ public class Way {
         Double min = null;
         Node minNode = null;
         for (Node node : visitedNodes) {
+            node.setDistanceTarget(node, targetNode);
             if (min == null || node.getDistanceType() < min) {
-                min = node.getDistanceType();
                 minNode = node;
+                minNode.setDistanceTarget(minNode, targetNode);
+                min = minNode.getDistanceType();
             }
         }
         return minNode;
@@ -103,11 +114,14 @@ public class Way {
     private void initialize() {
         for (Node node : nodes) {
             node.setDistance(Double.POSITIVE_INFINITY);
+            node.setChecked(false);
             predecessor.put(node, null);
         }
         initialNode.setDistance(0.0);
+        visitedNodes.clear();
         visitedNodes.add(initialNode);
-
+        allVisitedNodes.clear();
+        allVisitedNodes.add(initialNode);
     }
 
     private List<Node> buildPath() {
@@ -157,5 +171,9 @@ public class Way {
             visitedNodes.clear();
         }
         return buildPath();
+    }
+
+    public Set<Node> getAllVisitedNodes() {
+        return allVisitedNodes;
     }
 }

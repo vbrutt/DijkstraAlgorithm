@@ -1,8 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest
 -------------------------------------------------------------------------------
-Tests run: 4, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 26.646 sec <<< FAILURE! - in de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest
-keineVerbindung(de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest)  Time elapsed: 2.168 sec  <<< FAILURE!
-java.lang.AssertionError: Zwischen Start- und Endknoten ist keine Verbindung möglich
-	at de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest.keineVerbindung(OutputTest.java:50)
-
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 29.981 sec - in de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest

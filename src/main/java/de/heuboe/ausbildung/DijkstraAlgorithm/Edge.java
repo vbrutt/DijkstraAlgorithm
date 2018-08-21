@@ -23,8 +23,8 @@ public class Edge {
      *            node
      */
     public Edge(Node origin, Node destination) {
-        this.origin = origin;
-        this.destination = destination;
+        setOrigin(origin);
+        setDestination(destination);
     }
 
     public Node getOrigin() {
@@ -41,10 +41,6 @@ public class Edge {
 
     public void setDestination(Node destination) {
         this.destination = destination;
-    }
-
-    public int getSpeedLimit() {
-        return SPEEDLIMIT;
     }
 
     public double getDistance() {

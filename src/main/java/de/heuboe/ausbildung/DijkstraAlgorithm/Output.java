@@ -96,7 +96,7 @@ public class Output {
         return ct.transform(coords);
     }
 
-    private Coordinate[] getCoords(List<Node> pathAlg, Coordinate[] coords) {
+    private Coordinate[] getCoords(Collection<Node> pathAlg, Coordinate[] coords) {
         int count = 0;
         for (Node node : pathAlg) {
             double x = node.getX();
@@ -125,6 +125,24 @@ public class Output {
             coordinates.add(coords[i]);
             Geometry line = geoFactory.createPolyline(coordinates, dstSrid);
             record.setGeometry(line);
+            writer.add(record);
+        }
+        writer.close();
+    }
+
+    public void outputNodes(String path, Set<Node> pathAlg) throws FactoryException {
+        Coordinate[] coords = new Coordinate[pathAlg.size()];
+        coords = getCoords(pathAlg, coords);
+        coords = transform(coords);
+
+        DataStore store = factory.createNewDataStore(type, path, props);
+        writer = store.getWriter();
+
+        for (int i = 0; i < coords.length; i++) {
+            GeoData record = (GeoData) type.createData();
+            // Koordinaten
+            Geometry point = geoFactory.createPoint(coords[i], dstSrid);
+            record.setGeometry(point);
             writer.add(record);
         }
         writer.close();
