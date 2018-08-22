@@ -29,12 +29,6 @@ public class Node {
 
     protected static Map<String, Node> nodes = new HashMap<>();
 
-    public Node(Junction junction) {
-        this.xCoord = junction.getX();
-        this.yCoord = junction.getY();
-        this.id = junction.getId();
-    }
-
     public Node(String id) {
         this.id = id;
     }
@@ -49,15 +43,41 @@ public class Node {
         }
         this.xCoord = junction.getX();
         this.yCoord = junction.getY();
+
     }
 
-    public static Node getNode(String id, Junction junction) {
-        Node node = nodes.get(id);
-        if (node == null) {
-            node = new Node(junction);
-            nodes.put(id, node);
+    public Node(CSVRecord record) {
+        this.id = record.get("LOCATION CODE");
+        setNeighbours(StringUtils.stripStart(record.get("POSITIVE OFFSET"), "0"));
+        setNeighbours(StringUtils.stripStart(record.get("NEGATIVE OFFSET"), "0"));
+        setChecked(false);
+        if (!("").equals(record.get("INTERSECTION REFS"))) {
+            setIntersections(record.get("INTERSECTION REFS"));
         }
-        return node;
+
+        setXCoord((record.get("LATITUDE")));
+        setYCoord(record.get("LONGITUDE"));
+    }
+
+    private void setXCoord(String string) {
+        try {
+            this.setX(getCoordinat(string));
+        } catch (NumberFormatException e) {
+            this.setX(0);
+        }
+    }
+
+    private void setYCoord(String string) {
+        try {
+            this.setY(getCoordinat(string));
+        } catch (NumberFormatException e) {
+            this.setY(0);
+        }
+    }
+
+    private double getCoordinat(String date) {
+        String replaced = date.replace(',', '.');
+        return Double.valueOf(replaced);
     }
 
     public void setNeighbours(String id) {
@@ -223,8 +243,10 @@ public class Node {
     /**
      * calculates the direct distance between the current node and the target node
      * 
-     * @param a node1
-     * @param b node2
+     * @param a
+     *            node1
+     * @param b
+     *            node2
      * @return distance
      */
     public static double setDistance(Node a, Node b) {

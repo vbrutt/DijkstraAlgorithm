@@ -79,9 +79,9 @@ public class Input {
                 }
 
             }
-            for (String id : node.getIntersections()) {
-                if (!(id.equals(node.getId()))) {
-                    Node node1 = Node.nodes.get(id);
+            for (String idIntersection : node.getIntersections()) {
+                if (!(idIntersection.equals(node.getId()))) {
+                    Node node1 = Node.nodes.get(idIntersection);
                     if (node1 != null) {
                         Edge edge = new Edge(node, node1);
                         node.addEdge(edge);

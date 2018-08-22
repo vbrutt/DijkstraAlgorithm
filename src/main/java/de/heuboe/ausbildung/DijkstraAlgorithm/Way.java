@@ -25,6 +25,16 @@ public class Way {
         System.out.println("Knoten: " + nodes.size());
     }
 
+    public Way(int n, String initialNodeId, String targetNodeId) throws IOException, FactoryException {
+        Node.setGeneralDistance(n);
+
+        Graph graph = Input2.getNetFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
+        this.initialNode = getNode(initialNodeId);
+        this.targetNode = getNode(targetNodeId);
+        this.nodes = graph.getNodes();
+        System.out.println("Knoten: " + nodes.size());
+    }
+
     public Node getTargetNode() {
         return targetNode;
     }
@@ -57,11 +67,43 @@ public class Way {
 
     private void distanceUpdate(Edge edge, Node node) {
         if (edge.getDestination().getDistanceTarget() > node.getDistanceTarget()) {
-            // if(edge.getDestination().getDistanceType() > node.getDistanceType()) {
-            edge.getDestination().setDistance(edge, node);
-            predecessor.put(edge.getDestination(), edge);
-            visitedNodes.add(edge.getDestination());
-            allVisitedNodes.add(edge.getDestination());
+//             if (edge.getDestination().getDistanceType() > node.getDistanceType()) {
+            setDistance(edge, node);
+        }
+    }
+
+    /**
+     * Sets the distance for this node as well as the predecessor
+     * 
+     * @param edge
+     *            as predecessor
+     * @param node
+     *            current node
+     */
+    private void setDistance(Edge edge, Node node) {
+        edge.getDestination().setDistance(edge, node);
+        predecessor.put(edge.getDestination(), edge);
+        visitedNodes.add(edge.getDestination());
+        allVisitedNodes.add(edge.getDestination());
+    }
+
+    /**
+     * Chooses which method should be called depending if the distance is still set
+     * to infinity or not
+     * 
+     * @param edge
+     * @param node
+     * @param value
+     *            returns true if the distance value is infinity
+     */
+    private void evaluateDistances(Edge edge, Node node, boolean value) {
+        if (value) {
+            edge.getDestination().setDistanceTarget(edge.getDestination(), targetNode);
+            if ((edge.getDestination().getDistanceTarget() <= node.getDistanceTarget())) {
+                setDistance(edge, node);
+            }
+        } else {
+            distanceUpdate(edge, node);
         }
     }
 
@@ -71,21 +113,16 @@ public class Way {
      * 
      * @param node
      */
-    private void setDistances(Node node) {
+    /**
+     * Only considers the neighbours, which haven't been marked already
+     * 
+     * @param node
+     *            current node
+     */
+    private void checkNeighbours(Node node) {
         for (Edge edge : node.getEdges()) {
             if (!(edge.getDestination().isChecked())) {
-                if (edge.getDestination().getDistanceType().isInfinite()) {
-                    edge.getDestination().setDistanceTarget(edge.getDestination(), targetNode);
-                    if (edge.getDestination().getDistanceTarget() > node.getDistanceTarget()) {
-                        continue;
-                    }
-                    edge.getDestination().setDistance(edge, node);
-                    predecessor.put(edge.getDestination(), edge);
-                    visitedNodes.add(edge.getDestination());
-                    allVisitedNodes.add(edge.getDestination());
-                } else {
-                    distanceUpdate(edge, node);
-                }
+                evaluateDistances(edge, node, edge.getDestination().getDistanceType().isInfinite());
             }
         }
     }
@@ -164,7 +201,7 @@ public class Way {
             Node currentNode = getMinimalNode();
             visitedNodes.remove(currentNode);
             if (currentNode != null && !(currentNode == targetNode && canTerminate(currentNode))) {
-                setDistances(currentNode);
+                checkNeighbours(currentNode);
                 currentNode.setChecked(true);
                 continue;
             }
