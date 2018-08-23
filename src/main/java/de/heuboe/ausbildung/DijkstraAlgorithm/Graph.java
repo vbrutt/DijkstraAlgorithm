@@ -13,7 +13,7 @@ public class Graph {
     private List<Edge> edges;
 
     /**
-     * creates a graph
+     * Creates a graph
      * 
      * @param nodes
      * @param edges

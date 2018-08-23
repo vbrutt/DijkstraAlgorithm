@@ -1,5 +1,7 @@
 package de.heuboe.ausbildung.DijkstraAlgorithm;
 
+import java.util.*;
+
 import de.heuboe.ausbildung.subwayPlan.process.*;
 
 /**
@@ -15,7 +17,7 @@ public class Edge {
     protected static final int SPEEDLIMIT = 130;
 
     /**
-     * creates an edge, that has an origin node and a destination node
+     * Creates an edge, that has an origin node and a destination node
      * 
      * @param origin
      *            node
@@ -60,5 +62,69 @@ public class Edge {
 
         double sum = deltaX + deltaY;
         this.distance = Math.sqrt(sum);
+    }
+
+    /**
+     * Adds the edge(s) to their node
+     * 
+     * @param nodeList
+     *            list with all the nodes
+     * @return list with all the edges
+     */
+    public static List<Edge> addEdges(List<Node> nodeList) {
+        List<Edge> allEdges = new ArrayList<>();
+        for (Node node : nodeList) {
+            setNeighbours(node, allEdges);
+            setIntersections(node, allEdges);
+        }
+        return allEdges;
+    }
+
+    /**
+     * Builds an edge from the node's neighbours and sets it to the node
+     * 
+     * @param node
+     * @param allEdges
+     *            list with all the edges for this node
+     */
+    public static void setNeighbours(Node node, List<Edge> allEdges) {
+        for (String idNeighbour : node.getNeighbours()) {
+            Node node1 = Node.nodes.get(idNeighbour);
+            addEdge(node1, node, allEdges);
+        }
+    }
+
+    /**
+     * Builds an edge from the node's intersection and sets it to the node
+     * 
+     * @param node
+     * @param allEdges
+     *            list with all the edges for this node
+     */
+    public static void setIntersections(Node node, List<Edge> allEdges) {
+        for (String idIntersection : node.getIntersections()) {
+            if (!(idIntersection.equals(node.getId()))) {
+                Node node1 = Node.nodes.get(idIntersection);
+                addEdge(node1, node, allEdges);
+            }
+        }
+    }
+
+    /**
+     * If node1 isn't null, then an edge will be built and added to the list
+     * 
+     * @param node1
+     *            destination node
+     * @param node
+     *            origin node
+     * @param allEdges
+     *            list with all edges
+     */
+    public static void addEdge(Node node1, Node node, List<Edge> allEdges) {
+        if (node1 != null) {
+            Edge edge = new Edge(node, node1);
+            node.addEdge(edge);
+            allEdges.add(edge);
+        }
     }
 }

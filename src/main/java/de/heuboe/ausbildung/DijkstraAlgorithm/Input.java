@@ -15,6 +15,12 @@ import de.heuboe.ausbildung.subwayPlan.io.*;
 import de.heuboe.geo.*;
 import de.heuboe.geo.impl.*;
 
+/**
+ * Reads the LCL file and builds a node out of every junction
+ * 
+ * @author verab
+ *
+ */
 public class Input {
     private static final String[] TYPES = { "P1.3", "L2.1", "L1.1", "R", "P" };
     private static CoordinateTransformer ct;
@@ -26,7 +32,7 @@ public class Input {
     }
 
     /**
-     * reads the LCL and fills the net
+     * Reads the LCL and fills the graph. The graph only contains highways
      * 
      * @param source
      *            of the LCL-file
@@ -34,7 +40,7 @@ public class Input {
      * @throws FactoryException
      * @throws IOException
      */
-    public static Graph getNetFormLCL(String source) throws FactoryException, IOException {
+    public static Graph getGraphFormLCL(String source) throws FactoryException, IOException {
         roads.clear();
         finalRoads.clear();
         CSVFormat format = CSVFormat.EXCEL.withHeader().withDelimiter(';');
@@ -54,43 +60,10 @@ public class Input {
         linkPoints();
         createRoads();
         List<Node> nodes = transform();
-        List<Edge> edges = addEdges(nodes);
+        List<Edge> edges = Edge.addEdges(nodes);
 
         return new Graph(nodes, edges);
 
-    }
-
-    /**
-     * adds the edge(s) to their node
-     * 
-     * @param nodeList
-     *            list with all the nodes
-     * @return list with all the edges
-     */
-    public static List<Edge> addEdges(List<Node> nodeList) {
-        List<Edge> allEdges = new ArrayList<>();
-        for (Node node : nodeList) {
-            for (String idNeighbour : node.getNeighbours()) {
-                Node node1 = Node.nodes.get(idNeighbour);
-                if (node1 != null) {
-                    Edge edge = new Edge(node, node1);
-                    node.addEdge(edge);
-                    allEdges.add(edge);
-                }
-
-            }
-            for (String idIntersection : node.getIntersections()) {
-                if (!(idIntersection.equals(node.getId()))) {
-                    Node node1 = Node.nodes.get(idIntersection);
-                    if (node1 != null) {
-                        Edge edge = new Edge(node, node1);
-                        node.addEdge(edge);
-                        allEdges.add(edge);
-                    }
-                }
-            }
-        }
-        return allEdges;
     }
 
     private static List<Node> transform() {

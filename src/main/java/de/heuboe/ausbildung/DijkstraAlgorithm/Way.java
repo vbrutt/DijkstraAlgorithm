@@ -15,20 +15,45 @@ public class Way {
     private double duration;
     private double distance;
 
+    /**
+     * Calls the input class, which filters the LCL file. That means, that the graph
+     * only contains highways
+     * 
+     * @param initialNodeId
+     *            Location code from the origin node
+     * @param targetNodeId
+     *            Location code from the destination node
+     * @param n
+     *            1 will return the shortest way and 2 will return the quickest way
+     * @throws IOException
+     * @throws FactoryException
+     */
     public Way(String initialNodeId, String targetNodeId, int n) throws IOException, FactoryException {
         Node.setGeneralDistance(n);
 
-        Graph graph = Input.getNetFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
+        Graph graph = Input.getGraphFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
         this.initialNode = getNode(initialNodeId);
         this.targetNode = getNode(targetNodeId);
         this.nodes = graph.getNodes();
         System.out.println("Knoten: " + nodes.size());
     }
 
+    /**
+     * Calls the input class, which contains all entries from the LCL file.
+     * 
+     * @param n
+     *            1 will return the sortest way and 2 will return the quickest way
+     * @param initialNodeId
+     *            Location code from the origin node
+     * @param targetNodeId
+     *            Location code from the destination node
+     * @throws IOException
+     * @throws FactoryException
+     */
     public Way(int n, String initialNodeId, String targetNodeId) throws IOException, FactoryException {
         Node.setGeneralDistance(n);
 
-        Graph graph = Input2.getNetFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
+        Graph graph = Input2.getGraphFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
         this.initialNode = getNode(initialNodeId);
         this.targetNode = getNode(targetNodeId);
         this.nodes = graph.getNodes();
@@ -66,8 +91,8 @@ public class Way {
     }
 
     private void distanceUpdate(Edge edge, Node node) {
-        if (edge.getDestination().getDistanceTarget() > node.getDistanceTarget()) {
-//             if (edge.getDestination().getDistanceType() > node.getDistanceType()) {
+        // if (edge.getDestination().getDistanceTarget() > node.getDistanceTarget()) {
+        if (edge.getDestination().getDistanceType() > node.getDistanceType()) {
             setDistance(edge, node);
         }
     }
@@ -99,9 +124,10 @@ public class Way {
     private void evaluateDistances(Edge edge, Node node, boolean value) {
         if (value) {
             edge.getDestination().setDistanceTarget(edge.getDestination(), targetNode);
-            if ((edge.getDestination().getDistanceTarget() <= node.getDistanceTarget())) {
-                setDistance(edge, node);
-            }
+            // if ((edge.getDestination().getDistanceTarget() <= node.getDistanceTarget()))
+            // {
+            setDistance(edge, node);
+            // }
         } else {
             distanceUpdate(edge, node);
         }
@@ -190,7 +216,7 @@ public class Way {
     }
 
     /**
-     * runs the algorithm until the target node is reached
+     * Runs the algorithm until the target node is reached
      * 
      * @return the path as list
      */
@@ -200,6 +226,9 @@ public class Way {
         while (!(visitedNodes.isEmpty())) {
             Node currentNode = getMinimalNode();
             visitedNodes.remove(currentNode);
+            if (currentNode.getId().equals("37058")) {
+                System.out.println();
+            }
             if (currentNode != null && !(currentNode == targetNode && canTerminate(currentNode))) {
                 checkNeighbours(currentNode);
                 currentNode.setChecked(true);

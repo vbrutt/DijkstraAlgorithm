@@ -14,7 +14,7 @@ import de.heuboe.ausbildung.netzplan.interfaces.Net;
 import de.heuboe.ausbildung.netzplan.interfaces.Road;
 
 public class OutputTest {
-    // @Test
+    @Test
     public void outputLCL() throws FactoryException, IOException {
         Net net = Input.getNetFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
         Set<Road> roads = net.getRoads();
@@ -23,7 +23,7 @@ public class OutputTest {
         output.outputLCL("./ShapeFiles/LCLAusgabe.shp", roads);
     }
 
-    // @Test
+    @Test
     public void outputDijkstra() throws IOException, FactoryException {
         Way way = new Way("11769", "12903", 1); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
         List<Node> path = new ArrayList<>();
@@ -40,7 +40,7 @@ public class OutputTest {
         output.outputDijkstra("./ShapeFiles/DijkstraLong.shp", path);
     }
 
-    // @Test
+    @Test
     public void keineVerbindung() throws IOException, FactoryException {
         Way way = new Way("11769", "54969", 1);
         List<Node> path = new ArrayList<>();
@@ -53,9 +53,9 @@ public class OutputTest {
         output.outputDijkstra("./ShapeFiles/Dijkstra123.shp", path);
     }
 
-    // @Test
+    @Test
     public void andereRichtung() throws IOException, FactoryException {
-        Way wayHin = new Way("11769", "12903", 1); // Köln - München
+        Way wayHin = new Way(1, "11769", "12903"); // Köln - München
         List<Node> path = new ArrayList<>();
         path = wayHin.run();
 
@@ -67,7 +67,7 @@ public class OutputTest {
             System.out.print(path.get(i).getId() + " , ");
         }
 
-        Way wayZurueck = new Way("12903", "11769", 1); // München - Köln
+        Way wayZurueck = new Way(1, "12903", "11769"); // München - Köln
         List<Node> path2 = new ArrayList<>();
         path2 = wayZurueck.run();
 
@@ -83,6 +83,13 @@ public class OutputTest {
         }
     }
 
+    /**
+     * Beim Einlesen der LCL wurden die Knoten nur aus Autobahnen gebildet. Der
+     * Algorithmus wurde optimiert
+     * 
+     * @throws IOException
+     * @throws FactoryException
+     */
     @Test
     public void dijkstraOptimiert() throws IOException, FactoryException {
         Way way = new Way("10141", "11104", 1); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
@@ -91,15 +98,22 @@ public class OutputTest {
         path = way.run();
 
         Output output = new Output(31463, 31467);
-        output.outputDijkstra("./ShapeFiles/DijkstraTEST.shp", path);
+        output.outputDijkstra("./ShapeFiles/DijkstraOptimiert.shp", path);
+        output.outputNodes("./ShapeFiles/WolkeOptimiert.shp", way.getAllVisitedNodes());
 
-        output.outputNodes("./ShapeFiles/WolkeTEST.shp", way.getAllVisitedNodes());
-        System.out.println(way.getAllVisitedNodes().size());
-        System.out.println(path.size());
-        System.out.println(way.getDistance() / 1000);
+        System.out.println("Dijkstra optimiert:" + way.getAllVisitedNodes().size() + ", " + path.size() + ", "
+                + way.getDistance() / 1000);
+
     }
 
-    // @Test
+    /**
+     * Beim Einlesen der LCL wurden die Knoten nur aus Autobahnen gebildet. Der
+     * Algorithmus wurde nicht optimiert
+     * 
+     * @throws IOException
+     * @throws FactoryException
+     */
+    @Test
     public void dijkstraOhneOptimierung() throws IOException, FactoryException {
         Way way = new Way("10141", "11104", 1); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
         List<Node> path = new ArrayList<>();
@@ -107,24 +121,54 @@ public class OutputTest {
         path = way.run();
 
         Output output = new Output(31463, 31467);
-        output.outputDijkstra("./ShapeFiles/Dijkstra.shp", path);
+        output.outputDijkstra("./ShapeFiles/DijkstraOhneOptimierung.shp", path);
+        output.outputNodes("./ShapeFiles/WolkeOhneOptimierung.shp", way.getAllVisitedNodes());
 
-        output.outputNodes("./ShapeFiles/Wolke.shp", way.getAllVisitedNodes());
+        System.out.println("Dijkstra nicht optimiert:" + way.getAllVisitedNodes().size() + ", " + path.size() + ", "
+                + way.getDistance() / 1000);
     }
 
+    /**
+     * alle Punkte von der LCL werden eingelesen und als Knoten gespeichert. Der
+     * Algorithmus wurde optimiert
+     * 
+     * @throws IOException
+     * @throws FactoryException
+     */
     @Test
-    public void inputFiltriert() throws IOException, FactoryException {
+    public void inputUnfiltriert() throws IOException, FactoryException {
         Way way = new Way(1, "10141", "11104"); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
         List<Node> path = new ArrayList<>();
 
         path = way.run();
 
         Output output = new Output(31463, 31467);
-        output.outputDijkstra("./ShapeFiles/DijkstraFiltriert.shp", path);
+        output.outputDijkstra("./ShapeFiles/DijkstraUnfiltriert.shp", path);
+        output.outputNodes("./ShapeFiles/WolkeUnfiltriert.shp", way.getAllVisitedNodes());
 
-        output.outputNodes("./ShapeFiles/WolkeFiltriert.shp", way.getAllVisitedNodes());
-        System.out.println(way.getDistance() / 1000);
-
+        System.out.println("Dijkstra filtriert und optimiert:" + way.getAllVisitedNodes().size() + ", " + path.size()
+                + ", " + way.getDistance() / 1000);
     }
 
+    /**
+     * alle Punkte von der LCL werden eingelesen und als Knoten gespeichert. Der
+     * Algorithmus wurde nicht optimiert
+     * 
+     * @throws IOException
+     * @throws FactoryException
+     */
+    @Test
+    public void inputUnfiltriertOhneOptimierung() throws IOException, FactoryException {
+        Way way = new Way(1, "10141", "11104"); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
+        List<Node> path = new ArrayList<>();
+
+        path = way.run();
+
+        Output output = new Output(31463, 31467);
+        output.outputDijkstra("./ShapeFiles/DijkstraUnfiltriertNichtOpt.shp", path);
+        output.outputNodes("./ShapeFiles/WolkeUnfiltriertNichtOpt.shp", way.getAllVisitedNodes());
+
+        System.out.println("Dijkstra filtreiert und nicht optimiert:" + way.getAllVisitedNodes().size() + ", "
+                + path.size() + ", " + way.getDistance() / 1000);
+    }
 }

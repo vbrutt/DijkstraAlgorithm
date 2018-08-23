@@ -33,6 +33,13 @@ public class Node {
         this.id = id;
     }
 
+    /**
+     * Sets the x,y coordinates from the given junction
+     * 
+     * @param record
+     *            CSV record
+     * @param junction
+     */
     public Node(CSVRecord record, Junction junction) {
         this.id = record.get("LOCATION CODE");
         setNeighbours(StringUtils.stripStart(record.get("POSITIVE OFFSET"), "0"));
@@ -46,6 +53,12 @@ public class Node {
 
     }
 
+    /**
+     * Sets the x,y coordinates from the LCL
+     * 
+     * @param record
+     *            CSV record
+     */
     public Node(CSVRecord record) {
         this.id = record.get("LOCATION CODE");
         setNeighbours(StringUtils.stripStart(record.get("POSITIVE OFFSET"), "0"));
@@ -142,7 +155,7 @@ public class Node {
     }
 
     /**
-     * use of the switch case to decide what should be compared. Either the distance
+     * Use of the switch case to decide what should be compared. Either the distance
      * between the two nodes or the duration of the route
      * 
      * @param edge
@@ -159,11 +172,10 @@ public class Node {
         default:
             break;
         }
-
     }
 
     /**
-     * sets the distance/duration for this node when there's already a concrete
+     * Sets the distance/duration for this node when there's already a concrete
      * value
      * 
      * @param distanceValue
@@ -229,7 +241,7 @@ public class Node {
     }
 
     /**
-     * sets the distance value from the current node to the target node
+     * Sets the distance value from the current node to the target node
      * 
      * @param a
      *            current node
@@ -241,7 +253,7 @@ public class Node {
     }
 
     /**
-     * calculates the direct distance between the current node and the target node
+     * Calculates the direct distance between the current node and the target node
      * 
      * @param a
      *            node1
@@ -259,5 +271,4 @@ public class Node {
         double sum = deltaX + deltaY;
         return Math.sqrt(sum);
     }
-
 }
