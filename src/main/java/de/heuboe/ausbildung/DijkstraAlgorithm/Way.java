@@ -7,7 +7,7 @@ import org.opengis.referencing.*;
 
 public class Way {
     private List<Node> nodes = new ArrayList<>();
-    private List<Node> visitedNodes = new ArrayList<>();
+    private Set<Node> visitedNodes = new HashSet<>();
     private Set<Node> allVisitedNodes = new HashSet<>();
     private Map<Node, Edge> predecessor = new HashMap<>();
     private Node targetNode;
@@ -31,11 +31,10 @@ public class Way {
     public Way(String initialNodeId, String targetNodeId, int n) throws IOException, FactoryException {
         Node.setGeneralDistance(n);
 
-        Graph graph = Input.getGraphFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
+        Graph graph = InputAlles.getGraphFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
         this.initialNode = getNode(initialNodeId);
         this.targetNode = getNode(targetNodeId);
         this.nodes = graph.getNodes();
-        System.out.println("Knoten: " + nodes.size());
     }
 
     /**
@@ -53,11 +52,10 @@ public class Way {
     public Way(int n, String initialNodeId, String targetNodeId) throws IOException, FactoryException {
         Node.setGeneralDistance(n);
 
-        Graph graph = Input2.getGraphFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
+        Graph graph = InputJunctions.getGraphFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
         this.initialNode = getNode(initialNodeId);
         this.targetNode = getNode(targetNodeId);
         this.nodes = graph.getNodes();
-        System.out.println("Knoten: " + nodes.size());
     }
 
     public Node getTargetNode() {
@@ -91,8 +89,8 @@ public class Way {
     }
 
     private void distanceUpdate(Edge edge, Node node) {
-        // if (edge.getDestination().getDistanceTarget() > node.getDistanceTarget()) {
-        if (edge.getDestination().getDistanceType() > node.getDistanceType()) {
+        if (edge.getDestination().getDistanceTarget() > node.getDistanceTarget()) {
+            // if (edge.getDestination().getDistanceType() > node.getDistanceType()) {
             setDistance(edge, node);
         }
     }
@@ -226,9 +224,6 @@ public class Way {
         while (!(visitedNodes.isEmpty())) {
             Node currentNode = getMinimalNode();
             visitedNodes.remove(currentNode);
-            if (currentNode.getId().equals("37058")) {
-                System.out.println();
-            }
             if (currentNode != null && !(currentNode == targetNode && canTerminate(currentNode))) {
                 checkNeighbours(currentNode);
                 currentNode.setChecked(true);

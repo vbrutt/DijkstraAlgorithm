@@ -101,7 +101,6 @@ public class Output {
         for (Node node : pathAlg) {
             double x = node.getX();
             double y = node.getY();
-
             coords[count] = new CoordinateImpl(x, y);
             count++;
         }
@@ -147,5 +146,4 @@ public class Output {
         }
         writer.close();
     }
-
 }

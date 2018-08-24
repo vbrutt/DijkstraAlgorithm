@@ -55,32 +55,20 @@ public class OutputTest {
 
     @Test
     public void andereRichtung() throws IOException, FactoryException {
-        Way wayHin = new Way(1, "11769", "12903"); // Köln - München
+        Way wayHin = new Way("11769", "12903", 1); // Köln - München
         List<Node> path = new ArrayList<>();
         path = wayHin.run();
 
         Output output = new Output(31463, 31467);
         output.outputDijkstra("./ShapeFiles/Hinweg.shp", path);
 
-        System.out.println(wayHin.getDistance() / 1000);
-        for (int i = path.size() - 1; i > 0; i--) {
-            System.out.print(path.get(i).getId() + " , ");
-        }
-
-        Way wayZurueck = new Way(1, "12903", "11769"); // München - Köln
+        Way wayZurueck = new Way("12903", "11769", 1); // München - Köln
         List<Node> path2 = new ArrayList<>();
         path2 = wayZurueck.run();
 
         output.outputDijkstra("./ShapeFiles/Rueckweg.shp", path2);
 
-        assertEquals(path.get(path.size() - 1).getDistance() / 1000, path2.get(path2.size() - 1).getDistance() / 1000,
-                5);
-
-        System.out.println();
-        System.out.println(wayZurueck.getDistance() / 1000);
-        for (int i = 0; i < path2.size(); i++) {
-            System.out.print(path2.get(i).getId() + " , ");
-        }
+        assertEquals(wayHin.getDistance(), wayZurueck.getDistance(), 1);
     }
 
     /**
@@ -100,10 +88,6 @@ public class OutputTest {
         Output output = new Output(31463, 31467);
         output.outputDijkstra("./ShapeFiles/DijkstraOptimiert.shp", path);
         output.outputNodes("./ShapeFiles/WolkeOptimiert.shp", way.getAllVisitedNodes());
-
-        System.out.println("Dijkstra optimiert:" + way.getAllVisitedNodes().size() + ", " + path.size() + ", "
-                + way.getDistance() / 1000);
-
     }
 
     /**
@@ -123,9 +107,6 @@ public class OutputTest {
         Output output = new Output(31463, 31467);
         output.outputDijkstra("./ShapeFiles/DijkstraOhneOptimierung.shp", path);
         output.outputNodes("./ShapeFiles/WolkeOhneOptimierung.shp", way.getAllVisitedNodes());
-
-        System.out.println("Dijkstra nicht optimiert:" + way.getAllVisitedNodes().size() + ", " + path.size() + ", "
-                + way.getDistance() / 1000);
     }
 
     /**
@@ -145,9 +126,6 @@ public class OutputTest {
         Output output = new Output(31463, 31467);
         output.outputDijkstra("./ShapeFiles/DijkstraUnfiltriert.shp", path);
         output.outputNodes("./ShapeFiles/WolkeUnfiltriert.shp", way.getAllVisitedNodes());
-
-        System.out.println("Dijkstra filtriert und optimiert:" + way.getAllVisitedNodes().size() + ", " + path.size()
-                + ", " + way.getDistance() / 1000);
     }
 
     /**
@@ -167,8 +145,5 @@ public class OutputTest {
         Output output = new Output(31463, 31467);
         output.outputDijkstra("./ShapeFiles/DijkstraUnfiltriertNichtOpt.shp", path);
         output.outputNodes("./ShapeFiles/WolkeUnfiltriertNichtOpt.shp", way.getAllVisitedNodes());
-
-        System.out.println("Dijkstra filtreiert und nicht optimiert:" + way.getAllVisitedNodes().size() + ", "
-                + path.size() + ", " + way.getDistance() / 1000);
     }
 }
