@@ -16,6 +16,12 @@ import de.heuboe.geo.data.*;
 import de.heuboe.geo.impl.*;
 import de.heuboe.geo.utils.*;
 
+/**
+ * Output class with various methods, that print the way in shape files
+ * 
+ * @author verab
+ *
+ */
 public class Output {
     private int dstSrid;
     private int srcSrid;
@@ -25,6 +31,15 @@ public class Output {
     private Properties props = new Properties();
     private Factory factory = Factory.Singleton.getInstance();
 
+    /**
+     * Initiates the output class by filling the attirbute table and setting the
+     * source srid and the destination srid
+     * 
+     * @param srcSrid
+     *            type of the source coordinate system
+     * @param dstSrid
+     *            type of the destination coordinate system
+     */
     public Output(int srcSrid, int dstSrid) {
         this.dstSrid = dstSrid;
         this.srcSrid = srcSrid;
@@ -58,6 +73,14 @@ public class Output {
         coordinates.add(twist(coords[1]));
     }
 
+    /**
+     * Prints the data extracted from the LCL file as a shapefile
+     * 
+     * @param path
+     *            directory, where the shapefile should be saved
+     * @param roads
+     *            from network plan
+     */
     public void outputLCL(String path, Set<Road> roads) {
         DataStore store = factory.createNewDataStore(type, path, props);
         writer = store.getWriter();
@@ -107,6 +130,15 @@ public class Output {
         return coords;
     }
 
+    /**
+     * Prints the path from the dijkstra algorith as a shapefile
+     * 
+     * @param path
+     *            directory, where the shapefile should be saved
+     * @param pathAlg
+     *            list with nodes, which builds the pathway
+     * @throws FactoryException
+     */
     public void outputDijkstra(String path, List<Node> pathAlg) throws FactoryException {
         Coordinate[] coords = new Coordinate[pathAlg.size()];
         coords = getCoords(pathAlg, coords);
@@ -129,6 +161,15 @@ public class Output {
         writer.close();
     }
 
+    /**
+     * Prints all the visited nodes as a shapefile
+     * 
+     * @param path
+     *            directory, where the shapefile should be saved
+     * @param pathAlg
+     *            list with all visited nodes
+     * @throws FactoryException
+     */
     public void outputNodes(String path, Set<Node> pathAlg) throws FactoryException {
         Coordinate[] coords = new Coordinate[pathAlg.size()];
         coords = getCoords(pathAlg, coords);

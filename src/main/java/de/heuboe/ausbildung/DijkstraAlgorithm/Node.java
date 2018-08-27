@@ -9,9 +9,9 @@ import de.heuboe.ausbildung.subwayPlan.interfaces.*;
 import de.heuboe.ausbildung.subwayPlan.process.*;
 
 /**
- * @author verab
+ * Describes a node
  * 
- *         Describes a node
+ * @author verab
  *
  */
 public class Node {
@@ -39,6 +39,7 @@ public class Node {
      * @param record
      *            CSV record
      * @param junction
+     *            to get the x and y coordinates
      */
     public Node(CSVRecord record, Junction junction) {
         this.id = record.get("LOCATION CODE");
@@ -117,6 +118,12 @@ public class Node {
         this.edges = edges;
     }
 
+    /**
+     * Adds an edge to this node
+     * 
+     * @param edge
+     *            the edge to be added
+     */
     public void addEdge(Edge edge) {
         if (!(edges.contains(edge))) {
             this.edges.add(edge);
@@ -146,10 +153,26 @@ public class Node {
         this.distance = distance;
     }
 
+    /**
+     * Considers the distance in order for the calculated way to be the shortest one
+     * 
+     * @param edge
+     *            edge with this node as origin
+     * @param node
+     *            current node
+     */
     public void shortestDistance(Edge edge, Node node) {
         edge.getDestination().setDist(edge.getDistance() + node.getDistance());
     }
 
+    /**
+     * Considers the distance in order for the calculated way to be the quickest one
+     * 
+     * @param edge
+     *            edge with this node as origin
+     * @param node
+     *            current node
+     */
     public void quickestDistance(Edge edge, Node node) {
         edge.getDestination().setDistance((edge.getDistance() / Edge.SPEEDLIMIT) + node.getDuration());
     }
@@ -159,7 +182,9 @@ public class Node {
      * between the two nodes or the duration of the route
      * 
      * @param edge
+     *            current edge
      * @param node
+     *            current node
      */
     public void setDistance(Edge edge, Node node) {
         switch (distanceType) {

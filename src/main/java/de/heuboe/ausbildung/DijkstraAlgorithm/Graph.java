@@ -16,7 +16,9 @@ public class Graph {
      * Creates a graph
      * 
      * @param nodes
+     *            from the graph
      * @param edges
+     *            from the graph
      */
     public Graph(List<Node> nodes, List<Edge> edges) {
         this.setNodes(nodes);

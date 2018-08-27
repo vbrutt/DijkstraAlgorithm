@@ -39,7 +39,7 @@ public class InputJunctions {
         try (FileReader reader = new FileReader(source)) {
             CSVParser parser = new CSVParser(reader, format);
             for (CSVRecord record : parser.getRecords()) {
-                if(record.get("LATITUDE").isEmpty() || record.get("LONGITUDE").isEmpty()){
+                if (record.get("LATITUDE").isEmpty() || record.get("LONGITUDE").isEmpty()) {
                     continue;
                 }
                 Node node = new Node(record);

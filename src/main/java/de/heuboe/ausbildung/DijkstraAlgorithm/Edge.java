@@ -50,6 +50,10 @@ public class Edge {
         return distance;
     }
 
+    /**
+     * Calculates and sets the distance for this edge.
+     * 
+     */
     public void setDistance() {
         Node a = this.origin;
         Node b = this.destination;
@@ -84,6 +88,7 @@ public class Edge {
      * Builds an edge from the node's neighbours and sets it to the node
      * 
      * @param node
+     *            actual node
      * @param allEdges
      *            list with all the edges for this node
      */
@@ -98,6 +103,7 @@ public class Edge {
      * Builds an edge from the node's intersection and sets it to the node
      * 
      * @param node
+     *            actual node
      * @param allEdges
      *            list with all the edges for this node
      */

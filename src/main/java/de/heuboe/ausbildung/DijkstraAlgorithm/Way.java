@@ -52,7 +52,8 @@ public class Way {
     public Way(int n, String initialNodeId, String targetNodeId) throws IOException, FactoryException {
         Node.setGeneralDistance(n);
 
-        Graph graph = InputJunctions.getGraphFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
+        Graph graph = InputJunctions
+                .getGraphFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
         this.initialNode = getNode(initialNodeId);
         this.targetNode = getNode(targetNodeId);
         this.nodes = graph.getNodes();
@@ -131,12 +132,6 @@ public class Way {
         }
     }
 
-    /**
-     * If the node's neighbours haven't been checked yet, then the distance will be
-     * set as well as the predecessor to this node
-     * 
-     * @param node
-     */
     /**
      * Only considers the neighbours, which haven't been marked already
      * 
