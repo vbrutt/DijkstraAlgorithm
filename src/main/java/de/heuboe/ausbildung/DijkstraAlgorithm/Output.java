@@ -127,7 +127,7 @@ public class Output {
             coords[count] = new CoordinateImpl(x, y);
             count++;
         }
-        return coords;
+        return coords;        
     }
 
     /**
@@ -187,4 +187,5 @@ public class Output {
         }
         writer.close();
     }
+
 }

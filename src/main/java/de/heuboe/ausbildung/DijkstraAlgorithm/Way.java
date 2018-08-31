@@ -131,6 +131,7 @@ public class Way {
             distanceUpdate(edge, node);
         }
     }
+   
 
     /**
      * Only considers the neighbours, which haven't been marked already

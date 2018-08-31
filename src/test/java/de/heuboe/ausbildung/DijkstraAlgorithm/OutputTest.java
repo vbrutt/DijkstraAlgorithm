@@ -37,7 +37,7 @@ public class OutputTest {
         System.out.println("In 15 Sekunden haben wir " + count + " Aufrufe geschafft");
 
         Output output = new Output(31463, 31467);
-        output.outputDijkstra("./ShapeFiles/DijkstraLong.shp", path);
+        output.outputDijkstra("./ShapeFiles/Dijkstra15Sec.shp", path);
     }
 
     @Test
@@ -50,11 +50,11 @@ public class OutputTest {
         assertFalse("Zwischen Start- und Endknoten ist keine Verbindung möglich", way.getTargetNode().isChecked());
 
         Output output = new Output(31463, 31467);
-        output.outputDijkstra("./ShapeFiles/Dijkstra123.shp", path);
+        output.outputDijkstra("./ShapeFiles/DijkstraKeineVerbindung.shp", path);
     }
 
     @Test
-    public void andereRichtung() throws IOException, FactoryException {
+    public void hinUndZurueck() throws IOException, FactoryException {
         Way wayHin = new Way("11769", "12903", 1); // Köln - München
         List<Node> path = new ArrayList<>();
         path = wayHin.run();
@@ -80,7 +80,7 @@ public class OutputTest {
      */
     @Test
     public void dijkstraOptimiert() throws IOException, FactoryException {
-        Way way = new Way("10141", "11104", 1); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
+        Way way = new Way("11769", "11104", 1); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
         List<Node> path = new ArrayList<>();
 
         path = way.run();
