@@ -1,13 +1,15 @@
 package de.heuboe.ausbildung.DijkstraAlgorithm;
 
-import de.heuboe.map.datatypes.*;
+import de.heuboe.geo.*;
 
 public class Line {
     private double slope;
     private double y0;
     private double x0;
-    private Point startPoint;
-    private Point endPoint;
+    private Coordinate startPoint;
+    private Coordinate endPoint;
+    private Coordinate[] gerade;
+    private double weight;
 
     public double getSlope() {
         return slope;
@@ -33,39 +35,40 @@ public class Line {
         this.x0 = x0;
     }
 
-    public Line(Point p1, Point p2) {
+    public Line(Coordinate p1, Coordinate p2) {
         this.setStartPoint(p1);
         this.setEndPoint(p2);
-        setLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
     }
 
-    private void setLine(final double x1, final double y1, final double x2, final double y2) {
-        this.slope = (y2 - y1) / (x2 - x1);
-        this.x0 = x2 - y2 / slope;
-        this.y0 = y2 - slope * x2;
-        if (Double.isNaN(x0) && slope == 0) {
-            // Occurs for horizontal lines right on the x axis.
-            x0 = Double.POSITIVE_INFINITY;
-        }
-        if (Double.isNaN(y0) && Double.isInfinite(slope)) {
-            // Occurs for vertical lines right on the y axis.
-            y0 = Double.POSITIVE_INFINITY;
-        }
-    }
-    
-    public Point getStartPoint() {
+    public Coordinate getStartPoint() {
         return startPoint;
     }
 
-    public void setStartPoint(Point startPoint) {
+    public void setStartPoint(Coordinate startPoint) {
         this.startPoint = startPoint;
     }
 
-    public Point getEndPoint() {
+    public Coordinate getEndPoint() {
         return endPoint;
     }
 
-    public void setEndPoint(Point endPoint) {
+    public void setEndPoint(Coordinate endPoint) {
         this.endPoint = endPoint;
+    }
+
+    public Coordinate[] getGerade() {
+        return gerade;
+    }
+
+    public void setGerade(Coordinate[] gerade) {
+        this.gerade = gerade;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 }

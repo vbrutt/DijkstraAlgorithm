@@ -7,6 +7,7 @@ import org.opengis.referencing.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.operation.*;
 
+import de.heuboe.ausbildung.subwayPlan.process.*;
 import de.heuboe.data.*;
 import de.heuboe.data.Factory;
 import de.heuboe.data.shp.*;
@@ -14,7 +15,6 @@ import de.heuboe.geo.*;
 import de.heuboe.geo.data.*;
 import de.heuboe.geo.impl.*;
 import de.heuboe.geo.utils.*;
-import de.heuboe.map.datatypes.*;
 
 public class Rarefaction {
     private int dstSrid;
@@ -24,44 +24,93 @@ public class Rarefaction {
     private DataWriter writer;
     private Properties props = new Properties();
     private Factory factory = Factory.Singleton.getInstance();
+    private Coordinate startPoint;
+    private Coordinate endPoint;
+    private List<Coordinate> allPoints;
+    private double maxAbstand;
 
-    public static void main(String[] args) throws FactoryException {
-        Point p1 = new Point(-2.0, -3.0);
-        Point p2 = new Point(0.0, -3.0);
-        Point p3 = new Point(2.0, -2.0);
-        Point p4 = new Point(3.0, 0.0);
-        Point p5 = new Point(2.0, 2.0);
-        Point p6 = new Point(0.0, 3.0);
-        Point p7 = new Point(-2.0, 3.0);
-
-        // Die Liste ist sortiert
-        List<Point> allPoints = new ArrayList<>();
-        allPoints.add(p1);
-        allPoints.add(p2);
-        allPoints.add(p3);
-        allPoints.add(p4);
-        allPoints.add(p5);
-        allPoints.add(p6);
-        allPoints.add(p7);
-
-        // Coordinate statt Point (?)
-        Line line = getLine(p1, p7);
-        Map<Point, Double> distances = getDistances(allPoints, line);
-
-        double maxAbstand = 1;
-
-        boolean check = checkDistances(distances, allPoints, maxAbstand);
-        Point p = getMaxDistance(allPoints, distances);
-
-        Rarefaction rarefaction = new Rarefaction();
-        // rarefaction.outputLine(4326, 31463, "./ShapeFiles/LineTEST.shp", linesList);
-        rarefaction.outputPoints(4326, 31463, "./ShapeFiles/Points.shp", allPoints);
+    public Rarefaction(Coordinate startPoint, Coordinate endPoint, List<Coordinate> allPoints, double maxAbstand) {
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
+        this.allPoints = allPoints;
+        this.maxAbstand = maxAbstand;
     }
 
-    private static Point getMaxDistance(List<Point> allPoints, Map<Point, Double> distances) {
+    private Line setNewLine(Coordinate startPoint, Coordinate endPoint) {
+        Line line = new Line(startPoint, endPoint);
+        line.setGerade(getLine(startPoint, endPoint));
+        line.setWeight(getLength(startPoint, endPoint));
+
+        return line;
+    }
+
+    private List<Coordinate> getPointsFromLine(List<Coordinate> allPoints, Coordinate startPoint, Coordinate endPoint) {
+        List<Coordinate> newPoints = new ArrayList<>();
+        boolean check = false;
+        for (int i = 0; i < allPoints.size(); i++) {
+            if (allPoints.get(i) == startPoint || allPoints.get(i) == endPoint || check) {
+                newPoints.add(allPoints.get(i));
+                if (allPoints.get(i) == endPoint) {
+                    check = false;
+                } else {
+                    check = true;
+                }
+            }
+        }
+        return newPoints;
+    }
+
+    public List<Coordinate> run() throws FactoryException {
+        List<Coordinate> allPointsCopy = allPoints;
+        Line line = setNewLine(startPoint, endPoint);
+
+        List<Coordinate> newLine = new ArrayList<>();
+
+        Map<Coordinate, Double> distances = new LinkedHashMap<>();
+
+        distances = getDistances(allPointsCopy, line, distances);
+
+        while (checkDistances(distances, allPointsCopy, maxAbstand) && line.getWeight() > maxAbstand) {
+            Coordinate extraPoint = getMaxDistance(allPointsCopy, distances);
+
+            line = setNewLine(startPoint, extraPoint);
+            newLine.add(line.getStartPoint());
+            newLine.add(line.getEndPoint());
+
+            allPointsCopy = getPointsFromLine(allPoints, line.getStartPoint(), line.getEndPoint());
+            distances = new LinkedHashMap<>();
+
+            distances = getDistances(allPointsCopy, line, distances);
+
+            line = setNewLine(extraPoint, endPoint);
+            newLine.add(line.getStartPoint());
+            newLine.add(line.getEndPoint());
+
+            allPointsCopy = getPointsFromLine(allPoints, line.getStartPoint(), line.getEndPoint());
+
+            distances = getDistances(allPointsCopy, line, distances);
+        }
+        return newLine;
+    }
+
+    private static double getLength(Coordinate point1, Coordinate point2) {
+        double deltaX = Tools.getDelta(point1.getX(), point2.getX());
+        double deltaY = Tools.getDelta(point1.getY(), point2.getY());
+
+        deltaX *= deltaX;
+        deltaY *= deltaY;
+
+        double sum = deltaX + deltaY;
+
+        return Math.sqrt(sum);
+    }
+
+    // returns den Punkt wo der Abstand am größten ist. Das wird dann unser extra
+    // Punkt sein
+    private static Coordinate getMaxDistance(List<Coordinate> allPoints, Map<Coordinate, Double> distances) {
         Double max = null;
-        Point maxPoint = null;
-        for (Point point : allPoints) {
+        Coordinate maxPoint = null;
+        for (Coordinate point : allPoints) {
             if (distances.get(point) != null) {
                 if (max == null || distances.get(point) > max) {
                     max = distances.get(point);
@@ -70,11 +119,13 @@ public class Rarefaction {
             }
         }
         return maxPoint;
-
     }
 
-    private static boolean checkDistances(Map<Point, Double> distances, List<Point> allPoints, double maxAbstand) {
-        for (Point point : allPoints) {
+    // guckt, ob die, schon gemessenen, Abstände größer sind als unser maximaler
+    // Abstand
+    private static boolean checkDistances(Map<Coordinate, Double> distances, List<Coordinate> allPoints,
+            double maxAbstand) {
+        for (Coordinate point : allPoints) {
             if (distances.get(point) != null) {
                 if (distances.get(point) > maxAbstand) {
                     return true;
@@ -84,63 +135,62 @@ public class Rarefaction {
         return false;
     }
 
-    // Alle Abstände berechnen und in einer Map speichern
-    public static Map<Point, Double> getDistances(List<Point> allPoints, Line line) {
-        Map<Point, Double> distances = new HashMap<>();
-
-        for (Point point : allPoints) {
-            if (point != line.getStartPoint() && point != line.getEndPoint()
-                    && point.getY() != line.getStartPoint().getY()) {
-                distances.put(point, calculateDistance(point, line));
+    // Alle Abstände berechnen und in einer Map, mit dem Punkt als key, speichern
+    public static Map<Coordinate, Double> getDistances(List<Coordinate> allPoints, Line line,
+            Map<Coordinate, Double> distances) {
+        for (Coordinate coordinate : allPoints) {
+            if (coordinate != line.getEndPoint() && coordinate != line.getStartPoint()
+                    && coordinate.getY() != line.getEndPoint().getY()
+                    && coordinate.getY() != line.getStartPoint().getY()) {
+                double distance = calculateDistance(coordinate, line);
+                distances.put(coordinate, distance);
             }
         }
         return distances;
     }
 
-    private static CoordinateImpl getVector(Point p1, Point p2) {
+    private static CoordinateImpl getVector(Coordinate p1, Coordinate p2) {
         double x = p2.getX() - p1.getX();
         double y = p2.getY() - p1.getY();
         return new CoordinateImpl(x, y);
     }
 
-    public static double getBetrag(CoordinateImpl produkt) {
-        double xQuadrat = Math.pow(produkt.getX(), 2);
-        double yQuadrat = Math.pow(produkt.getY(), 2);
+    public static double getBetrag(Coordinate p) {
+        double xQuadrat = Math.pow(p.getX(), 2);
+        double yQuadrat = Math.pow(p.getY(), 2);
 
         return Math.sqrt(xQuadrat + yQuadrat);
     }
 
-    public static double calculateDistance(Point point, Line line) {
-        CoordinateImpl vectorRed = getVector(point, line.getStartPoint());
-        CoordinateImpl point1 = new CoordinateImpl(point.getX(), point.getY(), 0);
-        CoordinateImpl produkt = produktRegel(vectorRed, point1);
-        
-        double betragOben = getBetrag(point1);
-        double betragUnten = getBetrag(produkt);
-        
-        return betragOben / betragUnten;
+    // berechnet den Abstand zwischen dem gegebenen Punkt und dem Punkt auf der
+    // Gerade
+    public static double calculateDistance(Coordinate point, Line line) {
+        Coordinate p1 = new CoordinateImpl(point.getX(), point.getY());
+        Coordinate p2 = new CoordinateImpl(line.getGerade()[0].getX(), line.getGerade()[0].getY());
+        Coordinate ortsvektor = getVector(p1, p2);
+        double betragZaehler = kreuzProdukt(line.getGerade()[1], ortsvektor);
+        double betragNenner = getBetrag(line.getGerade()[1]);
+
+        return betragZaehler / betragNenner;
     }
 
-    public static CoordinateImpl produktRegel(CoordinateImpl vectorRed, CoordinateImpl point1) {
-        double x = (point1.getX() * vectorRed.getX()) + (vectorRed.getY() * point1.getY());
-        // double y = (point1.getZ() * vectorRed.getX()) - (point1.getX() *
-        // vectorRed.getZ());
-        return new CoordinateImpl(x, 0, 0);
-
+    public static double kreuzProdukt(Coordinate p1, Coordinate p2) {
+        return Math.abs(p1.getX() * p2.getY() - p2.getX() * p1.getY());
     }
 
     // Gerade zwischen Start- und Endpunkt bauen
-    public static Line getLine(Point p1, Point p2) {
-        // List<Point> linePoints = new ArrayList<Point>();
-        // linePoints.add(p1);
-        // linePoints.add(p2);
-        //
-        // return new Line(linePoints);
+    public static Coordinate[] getLine(Coordinate p1, Coordinate p2) {
+        Coordinate[] gerade = new Coordinate[2];
+        // Ortsvektor
+        gerade[0] = new CoordinateImpl(p1.getX(), p1.getY());
+        // Richtungsvektor
+        gerade[1] = new CoordinateImpl(p2.getX() - p1.getX(), p2.getY() - p1.getY());
 
-        return new Line(p1, p2);
+        return gerade;
     }
 
-    private void outputPoints(int dstSrid, int srcSrid, String path, List<Point> points) throws FactoryException {
+    public void outputPoints(int dstSrid, int srcSrid, String path, List<Coordinate> allPoints)
+            throws FactoryException {
         this.dstSrid = dstSrid;
         this.srcSrid = srcSrid;
 
@@ -152,8 +202,8 @@ public class Rarefaction {
         props.put("de.heuboe.data.shp.geotype", "MULTI_POLYLINE");
         props.put("de.heuboe.data.shp.srid", "" + srcSrid);
 
-        Coordinate[] coords = new Coordinate[points.size()];
-        coords = getCoords(points, coords);
+        Coordinate[] coords = new Coordinate[allPoints.size()];
+        coords = getCoords(allPoints, coords);
         coords = transform(coords);
 
         DataStore store = factory.createNewDataStore(type, path, props);
@@ -173,9 +223,9 @@ public class Rarefaction {
 
     }
 
-    private Coordinate[] getCoords(List<Point> points, Coordinate[] coords) {
+    private Coordinate[] getCoords(List<Coordinate> allPoints, Coordinate[] coords) {
         int count = 0;
-        for (Point point : points) {
+        for (Coordinate point : allPoints) {
             double x = point.getX();
             double y = point.getY();
             coords[count] = new CoordinateImpl(x, y);
@@ -184,7 +234,7 @@ public class Rarefaction {
         return coords;
     }
 
-    public void outputLine(int dstSrid, int srcSrid, String path, List<Line> lines) throws FactoryException {
+    public void outputLine(int dstSrid, int srcSrid, String path, List<Coordinate> newLine) throws FactoryException {
         this.dstSrid = dstSrid;
         this.srcSrid = srcSrid;
 
@@ -196,8 +246,8 @@ public class Rarefaction {
         props.put("de.heuboe.data.shp.geotype", "MULTI_POLYLINE");
         props.put("de.heuboe.data.shp.srid", "" + srcSrid);
 
-        Coordinate[] coords = new Coordinate[lines.size() * 2];
-        // coords = getCoords(lines, coords);
+        Coordinate[] coords = new Coordinate[newLine.size()];
+        coords = getCoords(newLine, coords);
         coords = transform(coords);
 
         DataStore store = factory.createNewDataStore(type, path, props);
@@ -215,21 +265,6 @@ public class Rarefaction {
         }
         writer.close();
     }
-
-    // private Coordinate[] getCoords(Collection<org.geotools.math.Line> pathAlg,
-    // Coordinate[] coords) {
-    // int count = 0;
-    //
-    // for (org.geotools.math.Line linie : pathAlg) {
-    // for (Point point : ((Line) linie).getLineAsList()) {
-    // double x = point.getX();
-    // double y = point.getY();
-    // coords[count] = new CoordinateImpl(x, y);
-    // count++;
-    // }
-    // }
-    // return coords;
-    // }
 
     private Coordinate[] transform(Coordinate[] coords) throws FactoryException {
         CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG: " + srcSrid);

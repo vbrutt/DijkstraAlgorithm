@@ -12,6 +12,8 @@ import org.opengis.referencing.*;
 import de.heuboe.ausbildung.netzpan.eingabe.Input;
 import de.heuboe.ausbildung.netzplan.interfaces.Net;
 import de.heuboe.ausbildung.netzplan.interfaces.Road;
+import de.heuboe.geo.*;
+import de.heuboe.geo.impl.*;
 
 public class OutputTest {
     @Test
@@ -145,5 +147,33 @@ public class OutputTest {
         Output output = new Output(31463, 31467);
         output.outputDijkstra("./ShapeFiles/DijkstraUnfiltriertNichtOpt.shp", path);
         output.outputNodes("./ShapeFiles/WolkeUnfiltriertNichtOpt.shp", way.getAllVisitedNodes());
+    }
+
+    @Test
+    public void testVerdünnung() throws FactoryException {
+        MyPoint p1 = new MyPoint(-3.0, -2.0);
+        MyPoint p2 = new MyPoint(-3.0, 0.0);
+        MyPoint p3 = new MyPoint(-2.0, 2.0);
+        MyPoint p4 = new MyPoint(0.0, 3.0);
+        MyPoint p5 = new MyPoint(2.0, 2.0);
+        MyPoint p6 = new MyPoint(3.0, 0.0);
+        MyPoint p7 = new MyPoint(3.0, -2.0);
+
+        // Die Liste ist sortiert
+        List<Coordinate> allPoints = new ArrayList<>();
+        allPoints.add(p1);
+        allPoints.add(p2);
+        allPoints.add(p3);
+        allPoints.add(p4);
+        allPoints.add(p5);
+        allPoints.add(p6);
+        allPoints.add(p7);
+
+        Rarefaction rarefaction = new Rarefaction(p1, p7, allPoints, 1);
+        List<Coordinate> newLine = rarefaction.run();
+
+        rarefaction.outputLine(31467, 31463, "./ShapeFiles/LineTEST2.shp", newLine);
+        rarefaction.outputPoints(31467, 31463, "./ShapeFiles/Points2.shp", allPoints);
+
     }
 }
