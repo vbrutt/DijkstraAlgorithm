@@ -2,42 +2,23 @@ package de.heuboe.ausbildung.DijkstraAlgorithm;
 
 import de.heuboe.geo.*;
 
+/**
+ * @author verab
+ *
+ */
 public class Line {
-    private double slope;
-    private double y0;
-    private double x0;
+    private int id;
+    protected static int idCount = 0;
     private Coordinate startPoint;
     private Coordinate endPoint;
     private Coordinate[] gerade;
     private double weight;
 
-    public double getSlope() {
-        return slope;
-    }
-
-    public void setSlope(double slope) {
-        this.slope = slope;
-    }
-
-    public double getY0() {
-        return y0;
-    }
-
-    public void setY0(double y0) {
-        this.y0 = y0;
-    }
-
-    public double getX0() {
-        return x0;
-    }
-
-    public void setX0(double x0) {
-        this.x0 = x0;
-    }
-
     public Line(Coordinate p1, Coordinate p2) {
         this.setStartPoint(p1);
         this.setEndPoint(p2);
+        this.id = idCount;
+        idCount++;
     }
 
     public Coordinate getStartPoint() {
@@ -70,5 +51,13 @@ public class Line {
 
     public void setWeight(double weight) {
         this.weight = weight;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

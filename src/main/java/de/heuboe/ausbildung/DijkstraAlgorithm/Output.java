@@ -127,11 +127,11 @@ public class Output {
             coords[count] = new CoordinateImpl(x, y);
             count++;
         }
-        return coords;        
+        return coords;
     }
 
     /**
-     * Prints the path from the dijkstra algorith as a shapefile
+     * Prints the path from the dijkstra algorithm as a shapefile
      * 
      * @param path
      *            directory, where the shapefile should be saved
@@ -183,6 +183,74 @@ public class Output {
             // Koordinaten
             Geometry point = geoFactory.createPoint(coords[i], dstSrid);
             record.setGeometry(point);
+            writer.add(record);
+        }
+        writer.close();
+    }
+
+    public void outputPoints(String path, List<Coordinate> allPoints) throws FactoryException {
+        Coordinate[] coords = new Coordinate[allPoints.size()];
+        coords = getCoords2(allPoints, coords);
+        coords = transform(coords);
+
+        DataStore store = factory.createNewDataStore(type, path, props);
+        writer = store.getWriter();
+
+        for (int i = 1; i < coords.length; i++) {
+            GeoData record = (GeoData) type.createData();
+            // Koordinaten
+            List<Coordinate> coordinates = new ArrayList<>();
+            coordinates.add(coords[i - 1]);
+            coordinates.add(coords[i]);
+            Geometry line = geoFactory.createPolyline(coordinates, dstSrid);
+            record.setGeometry(line);
+            writer.add(record);
+        }
+        writer.close();
+
+    }
+
+    private Coordinate[] getCoords2(Collection<Coordinate> allPoints, Coordinate[] coords) {
+        int count = 0;
+        for (Coordinate point : allPoints) {
+            double x = point.getX();
+            double y = point.getY();
+            coords[count] = new CoordinateImpl(x, y);
+            count++;
+        }
+        return coords;
+    }
+
+    /**
+     * Prints the rarefaction line as a shapefile
+     * 
+     * @param path
+     *            where the file should be saved
+     * @param lines
+     *            list with lines
+     * @throws FactoryException
+     */
+    public void outputLine(String path, List<Line> lines) throws FactoryException {
+        List<Coordinate> points = new ArrayList<>();
+        for (Line line : lines) {
+            points.add(line.getStartPoint());
+            points.add(line.getEndPoint());
+        }
+        Coordinate[] coords = new Coordinate[points.size()];
+        coords = getCoords2(points, coords);
+        coords = transform(coords);
+
+        DataStore store = factory.createNewDataStore(type, path, props);
+        writer = store.getWriter();
+
+        for (int i = 1; i < coords.length; i++) {
+            GeoData record = (GeoData) type.createData();
+            // Koordinaten
+            List<Coordinate> coordinates = new ArrayList<>();
+            coordinates.add(coords[i - 1]);
+            coordinates.add(coords[i]);
+            Geometry line = geoFactory.createPolyline(coordinates, dstSrid);
+            record.setGeometry(line);
             writer.add(record);
         }
         writer.close();

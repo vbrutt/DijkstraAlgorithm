@@ -151,13 +151,13 @@ public class OutputTest {
 
     @Test
     public void testVerdünnung() throws FactoryException {
-        MyPoint p1 = new MyPoint(-3.0, -2.0);
-        MyPoint p2 = new MyPoint(-3.0, 0.0);
-        MyPoint p3 = new MyPoint(-2.0, 2.0);
-        MyPoint p4 = new MyPoint(0.0, 3.0);
-        MyPoint p5 = new MyPoint(2.0, 2.0);
-        MyPoint p6 = new MyPoint(3.0, 0.0);
-        MyPoint p7 = new MyPoint(3.0, -2.0);
+        Coordinate p1 = new CoordinateImpl(-3.0, -2.0);
+        Coordinate p2 = new CoordinateImpl(-3.0, 0.0);
+        Coordinate p3 = new CoordinateImpl(-2.0, 2.0);
+        Coordinate p4 = new CoordinateImpl(0.0, 3.0);
+        Coordinate p5 = new CoordinateImpl(2.0, 2.0);
+        Coordinate p6 = new CoordinateImpl(3.0, 0.0);
+        Coordinate p7 = new CoordinateImpl(3.0, -2.0);
 
         // Die Liste ist sortiert
         List<Coordinate> allPoints = new ArrayList<>();
@@ -169,11 +169,85 @@ public class OutputTest {
         allPoints.add(p6);
         allPoints.add(p7);
 
-        Rarefaction rarefaction = new Rarefaction(p1, p7, allPoints, 1);
-        List<Coordinate> newLine = rarefaction.run();
+        Rarefaction rarefaction = new Rarefaction(p1, p7, allPoints, 6);
+        List<Line> newLine = rarefaction.run();
 
-        rarefaction.outputLine(31467, 31463, "./ShapeFiles/LineTEST2.shp", newLine);
-        rarefaction.outputPoints(31467, 31463, "./ShapeFiles/Points2.shp", allPoints);
+        Output output = new Output(31467, 31463);
 
+        output.outputLine("./ShapeFiles/LineTEST1.shp", newLine);
+        output.outputPoints("./ShapeFiles/Points1.shp", allPoints);
+    }
+
+    @Test
+    public void testVerdünnung2() throws FactoryException {
+        Coordinate p1 = new CoordinateImpl(-7.0, 2.0);
+        Coordinate p2 = new CoordinateImpl(-6.0, 4.0);
+        Coordinate p3 = new CoordinateImpl(-5.0, 5.0);
+        Coordinate p4 = new CoordinateImpl(-4.0, 5.0);
+        Coordinate p5 = new CoordinateImpl(-3.0, 3.0);
+        Coordinate p6 = new CoordinateImpl(-1.0, -1.0);
+        Coordinate p7 = new CoordinateImpl(0.0, -2.0);
+        Coordinate p8 = new CoordinateImpl(1.0, -1.0);
+        Coordinate p9 = new CoordinateImpl(2.0, 1.0);
+        Coordinate p10 = new CoordinateImpl(3.0, 2.0);
+        Coordinate p11 = new CoordinateImpl(8.0, 8.0);
+
+        // Die Liste ist sortiert
+        List<Coordinate> allPoints = new ArrayList<>();
+        allPoints.add(p1);
+        allPoints.add(p2);
+        allPoints.add(p3);
+        allPoints.add(p4);
+        allPoints.add(p5);
+        allPoints.add(p6);
+        allPoints.add(p7);
+        allPoints.add(p8);
+        allPoints.add(p9);
+        allPoints.add(p10);
+        allPoints.add(p11);
+
+        Rarefaction rarefaction = new Rarefaction(p1, p11, allPoints, 7);
+        List<Line> line = rarefaction.run();
+
+        Output output = new Output(31467, 31463);
+
+        output.outputLine("./ShapeFiles/LineTEST2.shp", line);
+        output.outputPoints("./ShapeFiles/Points2.shp", allPoints);
+    }
+
+    @Test
+    public void testVerdünnung3() throws FactoryException {
+        Coordinate p1 = new CoordinateImpl(-3.0, 2.0);
+        Coordinate p2 = new CoordinateImpl(-2.0, -3.0);
+        Coordinate p3 = new CoordinateImpl(-1.0, 3.0);
+        Coordinate p4 = new CoordinateImpl(1.0, 2.0);
+        Coordinate p5 = new CoordinateImpl(4.0, 1.0);
+        Coordinate p6 = new CoordinateImpl(8.5, 3.0);
+        Coordinate p7 = new CoordinateImpl(11.0, 2.0);
+        Coordinate p8 = new CoordinateImpl(12.0, 2.0);
+        Coordinate p9 = new CoordinateImpl(13.0, 2.0);
+        Coordinate p10 = new CoordinateImpl(13.0, 2.0);
+        Coordinate p11 = new CoordinateImpl(13.0, 4.0);
+
+        // Die Liste ist sortiert
+        List<Coordinate> allPoints = new ArrayList<>();
+        allPoints.add(p1);
+        allPoints.add(p2);
+        allPoints.add(p3);
+        allPoints.add(p4);
+        allPoints.add(p5);
+        allPoints.add(p6);
+        allPoints.add(p7);
+        allPoints.add(p8);
+        allPoints.add(p9);
+        allPoints.add(p10);
+        allPoints.add(p11);
+
+        Rarefaction rarefaction = new Rarefaction(p1, p11, allPoints, 4);
+        List<Line> newLine = rarefaction.run();
+
+        Output output = new Output(31467, 31463);
+        output.outputLine("./ShapeFiles/LineTEST3.shp", newLine);
+        output.outputPoints("./ShapeFiles/Points3.shp", allPoints);
     }
 }

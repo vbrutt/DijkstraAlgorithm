@@ -2,32 +2,16 @@ package de.heuboe.ausbildung.DijkstraAlgorithm;
 
 import java.util.*;
 
-import org.geotools.referencing.*;
-import org.opengis.referencing.*;
-import org.opengis.referencing.crs.*;
-import org.opengis.referencing.operation.*;
-
 import de.heuboe.ausbildung.subwayPlan.process.*;
-import de.heuboe.data.*;
-import de.heuboe.data.Factory;
-import de.heuboe.data.shp.*;
 import de.heuboe.geo.*;
-import de.heuboe.geo.data.*;
 import de.heuboe.geo.impl.*;
-import de.heuboe.geo.utils.*;
 
 public class Rarefaction {
-    private int dstSrid;
-    private int srcSrid;
-    private GeometryFactory geoFactory = new DefaultGeometryFactory();
-    private Type type;
-    private DataWriter writer;
-    private Properties props = new Properties();
-    private Factory factory = Factory.Singleton.getInstance();
     private Coordinate startPoint;
     private Coordinate endPoint;
     private List<Coordinate> allPoints;
     private double maxAbstand;
+    private boolean biggerDistance = false;
 
     public Rarefaction(Coordinate startPoint, Coordinate endPoint, List<Coordinate> allPoints, double maxAbstand) {
         this.startPoint = startPoint;
@@ -36,7 +20,16 @@ public class Rarefaction {
         this.maxAbstand = maxAbstand;
     }
 
-    private Line setNewLine(Coordinate startPoint, Coordinate endPoint) {
+    /**
+     * Builds a line between start point and end point.
+     * 
+     * @param startPoint
+     *            start point of the line
+     * @param endPoint
+     *            end point of the line
+     * @return a line
+     */
+    private static Line setNewLine(Coordinate startPoint, Coordinate endPoint) {
         Line line = new Line(startPoint, endPoint);
         line.setGerade(getLine(startPoint, endPoint));
         line.setWeight(getLength(startPoint, endPoint));
@@ -44,7 +37,17 @@ public class Rarefaction {
         return line;
     }
 
-    private List<Coordinate> getPointsFromLine(List<Coordinate> allPoints, Coordinate startPoint, Coordinate endPoint) {
+    /**
+     * @param allPoints
+     *            list with all the points from the graph
+     * @param startPoint
+     * 
+     * @param endPoint
+     * 
+     * @return all points between the start point and end point
+     */
+    private static List<Coordinate> getPointsFromLine(List<Coordinate> allPoints, Coordinate startPoint,
+            Coordinate endPoint) {
         List<Coordinate> newPoints = new ArrayList<>();
         boolean check = false;
         for (int i = 0; i < allPoints.size(); i++) {
@@ -60,39 +63,85 @@ public class Rarefaction {
         return newPoints;
     }
 
-    public List<Coordinate> run() throws FactoryException {
-        List<Coordinate> allPointsCopy = allPoints;
-        Line line = setNewLine(startPoint, endPoint);
-
-        List<Coordinate> newLine = new ArrayList<>();
-
-        Map<Coordinate, Double> distances = new LinkedHashMap<>();
-
-        distances = getDistances(allPointsCopy, line, distances);
-
-        while (checkDistances(distances, allPointsCopy, maxAbstand) && line.getWeight() > maxAbstand) {
-            Coordinate extraPoint = getMaxDistance(allPointsCopy, distances);
-
-            line = setNewLine(startPoint, extraPoint);
-            newLine.add(line.getStartPoint());
-            newLine.add(line.getEndPoint());
-
-            allPointsCopy = getPointsFromLine(allPoints, line.getStartPoint(), line.getEndPoint());
-            distances = new LinkedHashMap<>();
-
-            distances = getDistances(allPointsCopy, line, distances);
-
-            line = setNewLine(extraPoint, endPoint);
-            newLine.add(line.getStartPoint());
-            newLine.add(line.getEndPoint());
-
-            allPointsCopy = getPointsFromLine(allPoints, line.getStartPoint(), line.getEndPoint());
-
-            distances = getDistances(allPointsCopy, line, distances);
-        }
-        return newLine;
+    /**
+     * @param lines
+     *            list with already added lines
+     * @param line1
+     *            first line
+     * @param line2
+     *            second line
+     * @return list with the two new added lines
+     */
+    public static List<Line> addNewLines(List<Line> lines, Line line1, Line line2) {
+        lines.add(line1);
+        lines.add(line2);
+        return lines;
     }
 
+    /**
+     * Runs the algorithm until all lines are smaller than the max distance
+     * 
+     * @return a list with the rarefactionfactioned line
+     */
+    public List<Line> run() {
+        List<Coordinate> linePoints;
+        List<Line> unfinishedLines = new ArrayList<>(); // Linien, die NICHT ok sind
+        List<Line> finishedLines = new ArrayList<>(); // Linien, die ok sind
+        Map<Coordinate, Double> distances = new HashMap<>();
+
+        unfinishedLines.add(setNewLine(startPoint, endPoint));
+
+        Line line1 = null;
+        Line line2 = null;
+
+        for (int i = 0; i < unfinishedLines.size(); i++) {
+            biggerDistance = false;
+            Line line = unfinishedLines.get(i);
+            linePoints = getPointsFromLine(allPoints, line.getStartPoint(), line.getEndPoint());
+            distances = getDistances(linePoints, line, distances);
+
+            Coordinate extraPoint = getMaxDistance(linePoints, distances);
+
+            line1 = setNewLine(line.getStartPoint(), extraPoint); // Erste Linie bauen
+            line2 = setNewLine(extraPoint, line.getEndPoint()); // Zweite Linie bauen
+            checkLines(unfinishedLines, finishedLines, line1, line2);
+
+        }
+        return finishedLines;
+    }
+
+    /**
+     * If the distance between the lines and the points from the graph are bigger
+     * than the max distance, then the lines will be added to the unfinished lines
+     * list in order for it to be dealt it. Else the lines will be added to the
+     * finished line list, which means that the lines' distances are ok
+     * 
+     * @param unfinishedLines
+     *            list with lines, which need to be dealt with
+     * @param finishedLines
+     *            list with lines, that are ok
+     * @param line1
+     *            first line
+     * @param line2
+     *            second line
+     */
+    private void checkLines(List<Line> unfinishedLines, List<Line> finishedLines, Line line1, Line line2) {
+        if (biggerDistance) {
+            unfinishedLines.add(line1);
+            unfinishedLines.add(line2);
+            return;
+        }
+        finishedLines.add(line1);
+        finishedLines.add(line2);
+    }
+
+    /**
+     * @param point1
+     *            first point
+     * @param point2
+     *            second point
+     * @return the length between two points
+     */
     private static double getLength(Coordinate point1, Coordinate point2) {
         double deltaX = Tools.getDelta(point1.getX(), point2.getX());
         double deltaY = Tools.getDelta(point1.getY(), point2.getY());
@@ -100,62 +149,81 @@ public class Rarefaction {
         deltaX *= deltaX;
         deltaY *= deltaY;
 
-        double sum = deltaX + deltaY;
-
-        return Math.sqrt(sum);
+        return Math.sqrt(deltaX + deltaY);
     }
 
-    // returns den Punkt wo der Abstand am größten ist. Das wird dann unser extra
-    // Punkt sein
+    /**
+     * This point will be used to fraction our already built line into two lines.
+     * The extra point inbetween the original line will be this one
+     * 
+     * @param allPoints
+     *            a list with all points from the graph
+     * @param distances
+     *            a map with a point as key and its distance as value
+     * @return the point, which has the biggest distance
+     */
     private static Coordinate getMaxDistance(List<Coordinate> allPoints, Map<Coordinate, Double> distances) {
         Double max = null;
         Coordinate maxPoint = null;
         for (Coordinate point : allPoints) {
-            if (distances.get(point) != null) {
-                if (max == null || distances.get(point) > max) {
-                    max = distances.get(point);
-                    maxPoint = point;
-                }
+            if (distances.get(point) != null && (max == null || distances.get(point) > max)) {
+                max = distances.get(point);
+                maxPoint = point;
             }
         }
         return maxPoint;
     }
 
-    // guckt, ob die, schon gemessenen, Abstände größer sind als unser maximaler
-    // Abstand
-    private static boolean checkDistances(Map<Coordinate, Double> distances, List<Coordinate> allPoints,
-            double maxAbstand) {
-        for (Coordinate point : allPoints) {
-            if (distances.get(point) != null) {
-                if (distances.get(point) > maxAbstand) {
-                    return true;
-                }
-            }
+    /**
+     * Checks if the distance is bigger than the allowed distance. If so, the
+     * "biggerDistance" variable will be set to true.
+     * 
+     * @param distance
+     *            distance value
+     */
+    private void checkDistance(double distance) {
+        if (distance > maxAbstand) {
+            biggerDistance = true;
         }
-        return false;
     }
 
-    // Alle Abstände berechnen und in einer Map, mit dem Punkt als key, speichern
-    public static Map<Coordinate, Double> getDistances(List<Coordinate> allPoints, Line line,
+    /**
+     * Calculates the distance between the line and the points inbetween. saves
+     * those in a map
+     * 
+     * @param allPoints
+     *            list with all points of the graph
+     * @param line
+     *            line to be processed
+     * @param distances
+     *            map with all distances
+     * @return a map with a point as key and its distance as the value
+     */
+    private Map<Coordinate, Double> getDistances(List<Coordinate> allPoints, Line line,
             Map<Coordinate, Double> distances) {
         for (Coordinate coordinate : allPoints) {
-            if (coordinate != line.getEndPoint() && coordinate != line.getStartPoint()
-                    && coordinate.getY() != line.getEndPoint().getY()
-                    && coordinate.getY() != line.getStartPoint().getY()) {
-                double distance = calculateDistance(coordinate, line);
-                distances.put(coordinate, distance);
-            }
+            double distance = calculateDistance(coordinate, line);
+            checkDistance(distance);
+            distances.put(coordinate, distance);
         }
         return distances;
     }
 
+    /**
+     * @param p1
+     *            first point
+     * @param p2
+     *            second point
+     * @return a vector from point 1 and point 2
+     */
     private static CoordinateImpl getVector(Coordinate p1, Coordinate p2) {
         double x = p2.getX() - p1.getX();
         double y = p2.getY() - p1.getY();
+
         return new CoordinateImpl(x, y);
     }
 
-    public static double getBetrag(Coordinate p) {
+    public static double getAbsoluteValue(Coordinate p) {
         double xQuadrat = Math.pow(p.getX(), 2);
         double yQuadrat = Math.pow(p.getY(), 2);
 
@@ -169,7 +237,7 @@ public class Rarefaction {
         Coordinate p2 = new CoordinateImpl(line.getGerade()[0].getX(), line.getGerade()[0].getY());
         Coordinate ortsvektor = getVector(p1, p2);
         double betragZaehler = kreuzProdukt(line.getGerade()[1], ortsvektor);
-        double betragNenner = getBetrag(line.getGerade()[1]);
+        double betragNenner = getAbsoluteValue(line.getGerade()[1]);
 
         return betragZaehler / betragNenner;
     }
@@ -187,91 +255,5 @@ public class Rarefaction {
         gerade[1] = new CoordinateImpl(p2.getX() - p1.getX(), p2.getY() - p1.getY());
 
         return gerade;
-    }
-
-    public void outputPoints(int dstSrid, int srcSrid, String path, List<Coordinate> allPoints)
-            throws FactoryException {
-        this.dstSrid = dstSrid;
-        this.srcSrid = srcSrid;
-
-        new ShpFactory();
-        Map<String, Type> members = new LinkedHashMap<>();
-
-        type = factory.getType("shp", "Linie", members, "", "");
-
-        props.put("de.heuboe.data.shp.geotype", "MULTI_POLYLINE");
-        props.put("de.heuboe.data.shp.srid", "" + srcSrid);
-
-        Coordinate[] coords = new Coordinate[allPoints.size()];
-        coords = getCoords(allPoints, coords);
-        coords = transform(coords);
-
-        DataStore store = factory.createNewDataStore(type, path, props);
-        writer = store.getWriter();
-
-        for (int i = 1; i < coords.length; i++) {
-            GeoData record = (GeoData) type.createData();
-            // Koordinaten
-            List<Coordinate> coordinates = new ArrayList<>();
-            coordinates.add(coords[i - 1]);
-            coordinates.add(coords[i]);
-            Geometry line = geoFactory.createPolyline(coordinates, dstSrid);
-            record.setGeometry(line);
-            writer.add(record);
-        }
-        writer.close();
-
-    }
-
-    private Coordinate[] getCoords(List<Coordinate> allPoints, Coordinate[] coords) {
-        int count = 0;
-        for (Coordinate point : allPoints) {
-            double x = point.getX();
-            double y = point.getY();
-            coords[count] = new CoordinateImpl(x, y);
-            count++;
-        }
-        return coords;
-    }
-
-    public void outputLine(int dstSrid, int srcSrid, String path, List<Coordinate> newLine) throws FactoryException {
-        this.dstSrid = dstSrid;
-        this.srcSrid = srcSrid;
-
-        new ShpFactory();
-        Map<String, Type> members = new LinkedHashMap<>();
-
-        type = factory.getType("shp", "Linie", members, "", "");
-
-        props.put("de.heuboe.data.shp.geotype", "MULTI_POLYLINE");
-        props.put("de.heuboe.data.shp.srid", "" + srcSrid);
-
-        Coordinate[] coords = new Coordinate[newLine.size()];
-        coords = getCoords(newLine, coords);
-        coords = transform(coords);
-
-        DataStore store = factory.createNewDataStore(type, path, props);
-        writer = store.getWriter();
-
-        for (int i = 1; i < coords.length; i++) {
-            GeoData record = (GeoData) type.createData();
-            // Koordinaten
-            List<Coordinate> coordinates = new ArrayList<>();
-            coordinates.add(coords[i - 1]);
-            coordinates.add(coords[i]);
-            Geometry line = geoFactory.createPolyline(coordinates, dstSrid);
-            record.setGeometry(line);
-            writer.add(record);
-        }
-        writer.close();
-    }
-
-    private Coordinate[] transform(Coordinate[] coords) throws FactoryException {
-        CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG: " + srcSrid);
-        CoordinateReferenceSystem targetCRS = CRS.decode("EPSG: " + dstSrid);
-        MathTransform mt = CRS.findMathTransform(sourceCRS, targetCRS, true);
-        CoordinateTransformer ct = new TransformerImpl(mt);
-
-        return ct.transform(coords);
     }
 }
