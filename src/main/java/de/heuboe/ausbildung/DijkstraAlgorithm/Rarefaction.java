@@ -1,7 +1,9 @@
 package de.heuboe.ausbildung.DijkstraAlgorithm;
 
 import java.util.*;
+import java.util.Map.*;
 
+import de.heuboe.ausbildung.DijkstraAlgorithm.Line;
 import de.heuboe.ausbildung.subwayPlan.process.*;
 import de.heuboe.geo.*;
 import de.heuboe.geo.impl.*;
@@ -12,12 +14,17 @@ public class Rarefaction {
     private List<Coordinate> allPoints;
     private double maxAbstand;
     private boolean biggerDistance = false;
+    private Map<Coordinate, Integer> ids = new HashMap<>();
 
     public Rarefaction(Coordinate startPoint, Coordinate endPoint, List<Coordinate> allPoints, double maxAbstand) {
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.allPoints = allPoints;
         this.maxAbstand = maxAbstand;
+        int i = 0;
+        for (Coordinate point : allPoints) {
+            ids.put(point, i++);
+        }
     }
 
     /**
@@ -29,11 +36,8 @@ public class Rarefaction {
      *            end point of the line
      * @return a line
      */
-    private static Line setNewLine(Coordinate startPoint, Coordinate endPoint) {
-        Line line = new Line(startPoint, endPoint);
-        line.setGerade(getLine(startPoint, endPoint));
-        line.setWeight(getLength(startPoint, endPoint));
-
+    private Line setNewLine(Coordinate startPoint, Coordinate endPoint) {
+        Line line = new Line(ids.get(startPoint), startPoint, endPoint);
         return line;
     }
 
@@ -87,27 +91,58 @@ public class Rarefaction {
         List<Coordinate> linePoints;
         List<Line> unfinishedLines = new ArrayList<>(); // Linien, die NICHT ok sind
         List<Line> finishedLines = new ArrayList<>(); // Linien, die ok sind
-        Map<Coordinate, Double> distances = new HashMap<>();
 
-        unfinishedLines.add(setNewLine(startPoint, endPoint));
+        Line line = setNewLine(startPoint, endPoint);
+        firstCheck(line, unfinishedLines, finishedLines);
+
+        // TODO id an den Punkten setzen
 
         Line line1 = null;
         Line line2 = null;
 
         for (int i = 0; i < unfinishedLines.size(); i++) {
             biggerDistance = false;
-            Line line = unfinishedLines.get(i);
+            line = unfinishedLines.get(i);
             linePoints = getPointsFromLine(allPoints, line.getStartPoint(), line.getEndPoint());
-            distances = getDistances(linePoints, line, distances);
-
-            Coordinate extraPoint = getMaxDistance(linePoints, distances);
+            Map<Coordinate, Double> distances = getDistances(linePoints, line);
+            Coordinate extraPoint = getMaxDistance(distances);
 
             line1 = setNewLine(line.getStartPoint(), extraPoint); // Erste Linie bauen
             line2 = setNewLine(extraPoint, line.getEndPoint()); // Zweite Linie bauen
             checkLines(unfinishedLines, finishedLines, line1, line2);
 
         }
+
+        // TODO Methode, die Linien nach ID-Größe sortiert
+        Collections.sort(finishedLines, Line.getIdComparator());
         return finishedLines;
+    }
+
+    /**
+     * If the distances between the line (from start point and end point) and the
+     * points from the graph are smaller than the max distance, then the algorithm
+     * is done and this line will be the solution. The solution will be added to the
+     * finished lines list.
+     * 
+     * If the distance is bigger, then the line will be added to the unfisnihed
+     * lines list and the algorithm will be run.
+     * 
+     * @param line
+     *            between the start and end point from the graph
+     * @param distances
+     *            map with the distances between the line and the points
+     * @param unfinishedLines
+     *            list with lines that still need to be processed
+     * @param finishedLines
+     *            list with lines, whose distance is smaller than the max distance
+     */
+    public void firstCheck(Line line, List<Line> unfinishedLines, List<Line> finishedLines) {
+        getDistances(allPoints, line);
+        if (!(biggerDistance)) {
+            finishedLines.add(line);
+            return;
+        }
+        unfinishedLines.add(line);
     }
 
     /**
@@ -162,12 +197,14 @@ public class Rarefaction {
      *            a map with a point as key and its distance as value
      * @return the point, which has the biggest distance
      */
-    private static Coordinate getMaxDistance(List<Coordinate> allPoints, Map<Coordinate, Double> distances) {
+    private static Coordinate getMaxDistance(Map<Coordinate, Double> distances) {
         Double max = null;
         Coordinate maxPoint = null;
-        for (Coordinate point : allPoints) {
-            if (distances.get(point) != null && (max == null || distances.get(point) > max)) {
-                max = distances.get(point);
+        for (Entry<Coordinate, Double> entry : distances.entrySet()) {
+            Coordinate point = entry.getKey();
+            double distance = entry.getValue();
+            if (max == null || distance > max) {
+                max = distance;
                 maxPoint = point;
             }
         }
@@ -199,55 +236,18 @@ public class Rarefaction {
      *            map with all distances
      * @return a map with a point as key and its distance as the value
      */
-    private Map<Coordinate, Double> getDistances(List<Coordinate> allPoints, Line line,
-            Map<Coordinate, Double> distances) {
+    private Map<Coordinate, Double> getDistances(List<Coordinate> allPoints, Line line) {
+        Map<Coordinate, Double> distances = new HashMap<>();
         for (Coordinate coordinate : allPoints) {
-            double distance = calculateDistance(coordinate, line);
+            double distance = line.calculateDistance(coordinate);
             checkDistance(distance);
             distances.put(coordinate, distance);
         }
         return distances;
     }
 
-    /**
-     * @param p1
-     *            first point
-     * @param p2
-     *            second point
-     * @return a vector from point 1 and point 2
-     */
-    private static CoordinateImpl getVector(Coordinate p1, Coordinate p2) {
-        double x = p2.getX() - p1.getX();
-        double y = p2.getY() - p1.getY();
-
-        return new CoordinateImpl(x, y);
-    }
-
-    public static double getAbsoluteValue(Coordinate p) {
-        double xQuadrat = Math.pow(p.getX(), 2);
-        double yQuadrat = Math.pow(p.getY(), 2);
-
-        return Math.sqrt(xQuadrat + yQuadrat);
-    }
-
-    // berechnet den Abstand zwischen dem gegebenen Punkt und dem Punkt auf der
-    // Gerade
-    public static double calculateDistance(Coordinate point, Line line) {
-        Coordinate p1 = new CoordinateImpl(point.getX(), point.getY());
-        Coordinate p2 = new CoordinateImpl(line.getGerade()[0].getX(), line.getGerade()[0].getY());
-        Coordinate ortsvektor = getVector(p1, p2);
-        double betragZaehler = kreuzProdukt(line.getGerade()[1], ortsvektor);
-        double betragNenner = getAbsoluteValue(line.getGerade()[1]);
-
-        return betragZaehler / betragNenner;
-    }
-
-    public static double kreuzProdukt(Coordinate p1, Coordinate p2) {
-        return Math.abs(p1.getX() * p2.getY() - p2.getX() * p1.getY());
-    }
-
     // Gerade zwischen Start- und Endpunkt bauen
-    public static Coordinate[] getLine(Coordinate p1, Coordinate p2) {
+    private static Coordinate[] getLine(Coordinate p1, Coordinate p2) {
         Coordinate[] gerade = new Coordinate[2];
         // Ortsvektor
         gerade[0] = new CoordinateImpl(p1.getX(), p1.getY());

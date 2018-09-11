@@ -17,7 +17,7 @@ import de.heuboe.geo.impl.*;
 import de.heuboe.geo.utils.*;
 
 /**
- * Output class with various methods, that print the way in shape files
+ * Output class with various methods, that prints the way in shape files
  * 
  * @author verab
  *
@@ -193,6 +193,11 @@ public class Output {
         coords = getCoords2(allPoints, coords);
         coords = transform(coords);
 
+        write(path, coords);
+
+    }
+    
+    public void write(String path, Coordinate[] coords) {
         DataStore store = factory.createNewDataStore(type, path, props);
         writer = store.getWriter();
 
@@ -207,7 +212,6 @@ public class Output {
             writer.add(record);
         }
         writer.close();
-
     }
 
     private Coordinate[] getCoords2(Collection<Coordinate> allPoints, Coordinate[] coords) {
@@ -240,20 +244,7 @@ public class Output {
         coords = getCoords2(points, coords);
         coords = transform(coords);
 
-        DataStore store = factory.createNewDataStore(type, path, props);
-        writer = store.getWriter();
-
-        for (int i = 1; i < coords.length; i++) {
-            GeoData record = (GeoData) type.createData();
-            // Koordinaten
-            List<Coordinate> coordinates = new ArrayList<>();
-            coordinates.add(coords[i - 1]);
-            coordinates.add(coords[i]);
-            Geometry line = geoFactory.createPolyline(coordinates, dstSrid);
-            record.setGeometry(line);
-            writer.add(record);
-        }
-        writer.close();
+        write(path, coords);
     }
 
 }

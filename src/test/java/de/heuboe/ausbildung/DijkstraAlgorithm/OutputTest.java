@@ -169,7 +169,7 @@ public class OutputTest {
         allPoints.add(p6);
         allPoints.add(p7);
 
-        Rarefaction rarefaction = new Rarefaction(p1, p7, allPoints, 6);
+        Rarefaction rarefaction = new Rarefaction(p1, p7, allPoints, 9);
         List<Line> newLine = rarefaction.run();
 
         Output output = new Output(31467, 31463);
@@ -249,5 +249,23 @@ public class OutputTest {
         Output output = new Output(31467, 31463);
         output.outputLine("./ShapeFiles/LineTEST3.shp", newLine);
         output.outputPoints("./ShapeFiles/Points3.shp", allPoints);
+    }
+
+    @Test
+    public void dijkstraUndVerduennung() throws IOException, FactoryException {
+        Way way = new Way(1, "10141", "11104"); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
+        List<Node> path = new ArrayList<>();
+
+        path = way.run();
+
+        Output output = new Output(31463, 31467);
+        output.outputDijkstra("./ShapeFiles/Dijkstra.shp", path);
+        
+        Graph graph = InputAlles.getGraphFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
+        List<Node> allPoints = graph.getNodes();
+        
+//        Rarefaction r = new Rarefaction(startPoint, endPoint, allPoints, maxAbstand)
+        
+        
     }
 }
