@@ -169,12 +169,12 @@ public class OutputTest {
         allPoints.add(p6);
         allPoints.add(p7);
 
-        Rarefaction rarefaction = new Rarefaction(p1, p7, allPoints, 9);
-        List<Line> newLine = rarefaction.run();
+        // Rarefaction rarefaction = new Rarefaction(p1, p7, allPoints, 9);
+        // List<Line> newLine = rarefaction.run();
 
         Output output = new Output(31467, 31463);
 
-        output.outputLine("./ShapeFiles/LineTEST1.shp", newLine);
+        // output.outputLine("./ShapeFiles/LineTEST1.shp", newLine);
         output.outputPoints("./ShapeFiles/Points1.shp", allPoints);
     }
 
@@ -206,12 +206,12 @@ public class OutputTest {
         allPoints.add(p10);
         allPoints.add(p11);
 
-        Rarefaction rarefaction = new Rarefaction(p1, p11, allPoints, 7);
-        List<Line> line = rarefaction.run();
+        // Rarefaction rarefaction = new Rarefaction(p1, p11, allPoints, 7);
+        // List<Line> line = rarefaction.run();
 
         Output output = new Output(31467, 31463);
 
-        output.outputLine("./ShapeFiles/LineTEST2.shp", line);
+        // output.outputLine("./ShapeFiles/LineTEST2.shp", line);
         output.outputPoints("./ShapeFiles/Points2.shp", allPoints);
     }
 
@@ -243,11 +243,11 @@ public class OutputTest {
         allPoints.add(p10);
         allPoints.add(p11);
 
-        Rarefaction rarefaction = new Rarefaction(p1, p11, allPoints, 4);
-        List<Line> newLine = rarefaction.run();
+        // Rarefaction rarefaction = new Rarefaction(p1, p11, allPoints, 4);
+        // List<Line> newLine = rarefaction.run();
 
         Output output = new Output(31467, 31463);
-        output.outputLine("./ShapeFiles/LineTEST3.shp", newLine);
+        // output.outputLine("./ShapeFiles/LineTEST3.shp", newLine);
         output.outputPoints("./ShapeFiles/Points3.shp", allPoints);
     }
 
@@ -259,13 +259,10 @@ public class OutputTest {
         path = way.run();
 
         Output output = new Output(31463, 31467);
-        output.outputDijkstra("./ShapeFiles/Dijkstra.shp", path);
-        
-        Graph graph = InputAlles.getGraphFormLCL("C:\\Users\\verab\\Documents\\Dijkstra-Algorithmus\\LCL16.0.D.csv");
-        List<Node> allPoints = graph.getNodes();
-        
-//        Rarefaction r = new Rarefaction(startPoint, endPoint, allPoints, maxAbstand)
-        
-        
+        // output.outputDijkstra("./ShapeFiles/Dijkstra.shp", path);
+
+        Rarefaction r = new Rarefaction(path.get(0), path.get(path.size() - 1), path, 10000);
+        List<Line> line = r.run();
+        output.outputLine("./ShapeFiles/LineTEST3.shp", line);
     }
 }

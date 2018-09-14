@@ -235,13 +235,13 @@ public class Output {
      * @throws FactoryException
      */
     public void outputLine(String path, List<Line> lines) throws FactoryException {
-        List<Coordinate> points = new ArrayList<>();
+        List<Node> points = new ArrayList<>();
         for (Line line : lines) {
             points.add(line.getStartPoint());
             points.add(line.getEndPoint());
         }
         Coordinate[] coords = new Coordinate[points.size()];
-        coords = getCoords2(points, coords);
+        coords = getCoords(points, coords);
         coords = transform(coords);
 
         write(path, coords);

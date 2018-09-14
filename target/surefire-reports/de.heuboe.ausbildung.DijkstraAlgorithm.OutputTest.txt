@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest
 -------------------------------------------------------------------------------
-Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 43.477 sec - in de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 47.52 sec - in de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest

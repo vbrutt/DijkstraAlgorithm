@@ -4,25 +4,22 @@ import java.util.*;
 import java.util.Map.*;
 
 import de.heuboe.ausbildung.DijkstraAlgorithm.Line;
-import de.heuboe.ausbildung.subwayPlan.process.*;
-import de.heuboe.geo.*;
-import de.heuboe.geo.impl.*;
 
 public class Rarefaction {
-    private Coordinate startPoint;
-    private Coordinate endPoint;
-    private List<Coordinate> allPoints;
+    private Node startPoint;
+    private Node endPoint;
+    private List<Node> allPoints;
     private double maxAbstand;
     private boolean biggerDistance = false;
-    private Map<Coordinate, Integer> ids = new HashMap<>();
+    private Map<Node, Integer> ids = new HashMap<>();
 
-    public Rarefaction(Coordinate startPoint, Coordinate endPoint, List<Coordinate> allPoints, double maxAbstand) {
+    public Rarefaction(Node startPoint, Node endPoint, List<Node> allPoints, double maxAbstand) {
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.allPoints = allPoints;
         this.maxAbstand = maxAbstand;
         int i = 0;
-        for (Coordinate point : allPoints) {
+        for (Node point : allPoints) {
             ids.put(point, i++);
         }
     }
@@ -36,28 +33,26 @@ public class Rarefaction {
      *            end point of the line
      * @return a line
      */
-    private Line setNewLine(Coordinate startPoint, Coordinate endPoint) {
-        Line line = new Line(ids.get(startPoint), startPoint, endPoint);
-        return line;
+    private Line setNewLine(Node startPoint, Node endPoint) {
+        return new Line(ids.get(startPoint), startPoint, endPoint);
     }
 
     /**
      * @param allPoints
      *            list with all the points from the graph
-     * @param startPoint
+     * @param node1
      * 
-     * @param endPoint
+     * @param node2
      * 
      * @return all points between the start point and end point
      */
-    private static List<Coordinate> getPointsFromLine(List<Coordinate> allPoints, Coordinate startPoint,
-            Coordinate endPoint) {
-        List<Coordinate> newPoints = new ArrayList<>();
+    private static List<Node> getPointsFromLine(List<Node> allPoints, Node node1, Node node2) {
+        List<Node> newPoints = new ArrayList<>();
         boolean check = false;
         for (int i = 0; i < allPoints.size(); i++) {
-            if (allPoints.get(i) == startPoint || allPoints.get(i) == endPoint || check) {
+            if (allPoints.get(i) == node1 || allPoints.get(i) == node2 || check) {
                 newPoints.add(allPoints.get(i));
-                if (allPoints.get(i) == endPoint) {
+                if (allPoints.get(i) == node2) {
                     check = false;
                 } else {
                     check = true;
@@ -88,14 +83,12 @@ public class Rarefaction {
      * @return a list with the rarefactionfactioned line
      */
     public List<Line> run() {
-        List<Coordinate> linePoints;
+        List<Node> linePoints;
         List<Line> unfinishedLines = new ArrayList<>(); // Linien, die NICHT ok sind
         List<Line> finishedLines = new ArrayList<>(); // Linien, die ok sind
 
         Line line = setNewLine(startPoint, endPoint);
         firstCheck(line, unfinishedLines, finishedLines);
-
-        // TODO id an den Punkten setzen
 
         Line line1 = null;
         Line line2 = null;
@@ -104,16 +97,17 @@ public class Rarefaction {
             biggerDistance = false;
             line = unfinishedLines.get(i);
             linePoints = getPointsFromLine(allPoints, line.getStartPoint(), line.getEndPoint());
-            Map<Coordinate, Double> distances = getDistances(linePoints, line);
-            Coordinate extraPoint = getMaxDistance(distances);
+            Map<Node, Double> distances = getDistances(linePoints, line);
+            Node extraPoint = getMaxDistance(distances);
 
             line1 = setNewLine(line.getStartPoint(), extraPoint); // Erste Linie bauen
             line2 = setNewLine(extraPoint, line.getEndPoint()); // Zweite Linie bauen
             checkLines(unfinishedLines, finishedLines, line1, line2);
-
+            if (biggerDistance) {
+                run(); // Versuch Rekursion einzubauen
+            }
         }
 
-        // TODO Methode, die Linien nach ID-Größe sortiert
         Collections.sort(finishedLines, Line.getIdComparator());
         return finishedLines;
     }
@@ -171,23 +165,6 @@ public class Rarefaction {
     }
 
     /**
-     * @param point1
-     *            first point
-     * @param point2
-     *            second point
-     * @return the length between two points
-     */
-    private static double getLength(Coordinate point1, Coordinate point2) {
-        double deltaX = Tools.getDelta(point1.getX(), point2.getX());
-        double deltaY = Tools.getDelta(point1.getY(), point2.getY());
-
-        deltaX *= deltaX;
-        deltaY *= deltaY;
-
-        return Math.sqrt(deltaX + deltaY);
-    }
-
-    /**
      * This point will be used to fraction our already built line into two lines.
      * The extra point inbetween the original line will be this one
      * 
@@ -197,11 +174,11 @@ public class Rarefaction {
      *            a map with a point as key and its distance as value
      * @return the point, which has the biggest distance
      */
-    private static Coordinate getMaxDistance(Map<Coordinate, Double> distances) {
+    private static Node getMaxDistance(Map<Node, Double> distances) {
         Double max = null;
-        Coordinate maxPoint = null;
-        for (Entry<Coordinate, Double> entry : distances.entrySet()) {
-            Coordinate point = entry.getKey();
+        Node maxPoint = null;
+        for (Entry<Node, Double> entry : distances.entrySet()) {
+            Node point = entry.getKey();
             double distance = entry.getValue();
             if (max == null || distance > max) {
                 max = distance;
@@ -228,7 +205,7 @@ public class Rarefaction {
      * Calculates the distance between the line and the points inbetween. saves
      * those in a map
      * 
-     * @param allPoints
+     * @param points
      *            list with all points of the graph
      * @param line
      *            line to be processed
@@ -236,24 +213,13 @@ public class Rarefaction {
      *            map with all distances
      * @return a map with a point as key and its distance as the value
      */
-    private Map<Coordinate, Double> getDistances(List<Coordinate> allPoints, Line line) {
-        Map<Coordinate, Double> distances = new HashMap<>();
-        for (Coordinate coordinate : allPoints) {
-            double distance = line.calculateDistance(coordinate);
+    private Map<Node, Double> getDistances(List<Node> points, Line line) {
+        Map<Node, Double> distances = new HashMap<>();
+        for (Node node : points) {
+            double distance = line.calculateDistance(node);
             checkDistance(distance);
-            distances.put(coordinate, distance);
+            distances.put(node, distance);
         }
         return distances;
-    }
-
-    // Gerade zwischen Start- und Endpunkt bauen
-    private static Coordinate[] getLine(Coordinate p1, Coordinate p2) {
-        Coordinate[] gerade = new Coordinate[2];
-        // Ortsvektor
-        gerade[0] = new CoordinateImpl(p1.getX(), p1.getY());
-        // Richtungsvektor
-        gerade[1] = new CoordinateImpl(p2.getX() - p1.getX(), p2.getY() - p1.getY());
-
-        return gerade;
     }
 }

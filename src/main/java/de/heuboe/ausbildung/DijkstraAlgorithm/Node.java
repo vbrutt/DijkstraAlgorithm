@@ -73,6 +73,11 @@ public class Node {
         setYCoord(record.get("LONGITUDE"));
     }
 
+    public Node(double x, double y) {
+        this.xCoord = x;
+        this.yCoord = y;
+    }
+
     private void setXCoord(String string) {
         try {
             this.setX(getCoordinat(string));
