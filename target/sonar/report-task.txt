@@ -2,5 +2,5 @@ projectKey=de.heuboe.ausbildung:DijkstraAlgorithm
 serverUrl=https://sonar.heuboe.hbintern
 serverVersion=7.2.0.13530
 dashboardUrl=https://sonar.heuboe.hbintern/dashboard?id=de.heuboe.ausbildung%3ADijkstraAlgorithm
-ceTaskId=AWX8V5DzDFwyp3VGv1QH
-ceTaskUrl=https://sonar.heuboe.hbintern/api/ce/task?id=AWX8V5DzDFwyp3VGv1QH
+ceTaskId=AWX8X1tCDFwyp3VGv1RG
+ceTaskUrl=https://sonar.heuboe.hbintern/api/ce/task?id=AWX8X1tCDFwyp3VGv1RG
