@@ -18,6 +18,7 @@ public class Node {
     private String id;
     private List<Edge> edges = new ArrayList<>();
     private Double distance;
+    private Double lineDistance;
     private Double duration;
     private double xCoord;
     private double yCoord;
@@ -26,6 +27,11 @@ public class Node {
     private boolean checked;
     private static int distanceType;
     private double distanceTarget;
+    private static final String SUCCESSOR = "POSITIVE OFFSET";
+    private static final String PREDECESSOR = "NEGATIVE OFFSET";
+    private long predecessorLocationCodes;
+    private long successorLocationCodes;
+    private List<String> neighboursAndIntersections = new ArrayList<>();
 
     protected static Map<String, Node> nodes = new HashMap<>();
 
@@ -43,14 +49,19 @@ public class Node {
      */
     public Node(CSVRecord record, Junction junction) {
         this.id = record.get("LOCATION CODE");
-        setNeighbours(StringUtils.stripStart(record.get("POSITIVE OFFSET"), "0"));
-        setNeighbours(StringUtils.stripStart(record.get("NEGATIVE OFFSET"), "0"));
+        setNeighbours(StringUtils.stripStart(record.get(SUCCESSOR), "0"));
+        setNeighbours(StringUtils.stripStart(record.get(PREDECESSOR), "0"));
         setChecked(false);
         if (!("").equals(record.get("INTERSECTION REFS"))) {
             setIntersections(record.get("INTERSECTION REFS"));
         }
         this.xCoord = junction.getX();
         this.yCoord = junction.getY();
+
+        getPredLocCode(record.get(PREDECESSOR));
+        getSuccLocCode(record.get(SUCCESSOR));
+
+        addAllNeighbours();
 
     }
 
@@ -61,21 +72,47 @@ public class Node {
      *            CSV record
      */
     public Node(CSVRecord record) {
+
         this.id = record.get("LOCATION CODE");
-        setNeighbours(StringUtils.stripStart(record.get("POSITIVE OFFSET"), "0"));
-        setNeighbours(StringUtils.stripStart(record.get("NEGATIVE OFFSET"), "0"));
+        setNeighbours(StringUtils.stripStart(record.get(SUCCESSOR), "0"));
+        setNeighbours(StringUtils.stripStart(record.get(PREDECESSOR), "0"));
         setChecked(false);
         if (!("").equals(record.get("INTERSECTION REFS"))) {
             setIntersections(record.get("INTERSECTION REFS"));
         }
-
         setXCoord((record.get("LATITUDE")));
         setYCoord(record.get("LONGITUDE"));
+        addAllNeighbours();
     }
 
     public Node(double x, double y) {
         this.xCoord = x;
         this.yCoord = y;
+    }
+
+    private void addAllNeighbours() {
+        for (String nodeID : this.getIntersections()) {
+            neighboursAndIntersections.add(nodeID);
+        }
+        for (String nodeID : this.getNeighbours()) {
+            neighboursAndIntersections.add(nodeID);
+        }
+    }
+
+    private void getPredLocCode(String string) {
+        try {
+            this.setPredecessorLocationCodes(Long.parseLong(string));
+        } catch (NumberFormatException e) {
+            this.setPredecessorLocationCodes(0);
+        }
+    }
+
+    private void getSuccLocCode(String string) {
+        try {
+            this.setSuccessorLocationCodes(Long.parseLong(string));
+        } catch (NumberFormatException e) {
+            this.setSuccessorLocationCodes(0);
+        }
     }
 
     private void setXCoord(String string) {
@@ -301,4 +338,37 @@ public class Node {
         double sum = deltaX + deltaY;
         return Math.sqrt(sum);
     }
+
+    public List<String> getNeighboursAndIntersections() {
+        return neighboursAndIntersections;
+    }
+
+    public void setNeighboursAndIntersections(List<String> neighboursAndIntersections) {
+        this.neighboursAndIntersections = neighboursAndIntersections;
+    }
+
+    public long getSuccessorLocationCodes() {
+        return successorLocationCodes;
+    }
+
+    public void setSuccessorLocationCodes(long successorLocationCodes) {
+        this.successorLocationCodes = successorLocationCodes;
+    }
+
+    public long getPredecessorLocationCodes() {
+        return predecessorLocationCodes;
+    }
+
+    public void setPredecessorLocationCodes(long predecessorLocationCodes) {
+        this.predecessorLocationCodes = predecessorLocationCodes;
+    }
+
+    public Double getLineDistance() {
+        return lineDistance;
+    }
+
+    public void setLineDistance(Double lineDistance) {
+        this.lineDistance = lineDistance;
+    }
+
 }

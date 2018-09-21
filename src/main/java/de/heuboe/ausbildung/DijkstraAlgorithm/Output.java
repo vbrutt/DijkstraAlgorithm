@@ -145,20 +145,7 @@ public class Output {
 
         coords = transform(coords);
 
-        DataStore store = factory.createNewDataStore(type, path, props);
-        writer = store.getWriter();
-
-        for (int i = 1; i < coords.length; i++) {
-            GeoData record = (GeoData) type.createData();
-            // Koordinaten
-            List<Coordinate> coordinates = new ArrayList<>();
-            coordinates.add(coords[i - 1]);
-            coordinates.add(coords[i]);
-            Geometry line = geoFactory.createPolyline(coordinates, dstSrid);
-            record.setGeometry(line);
-            writer.add(record);
-        }
-        writer.close();
+        write(path, coords);
     }
 
     /**
@@ -188,15 +175,15 @@ public class Output {
         writer.close();
     }
 
-    public void outputPoints(String path, List<Coordinate> allPoints) throws FactoryException {
+    public void outputPoints(String path, List<Node> allPoints) throws FactoryException {
         Coordinate[] coords = new Coordinate[allPoints.size()];
-        coords = getCoords2(allPoints, coords);
+        coords = getCoords(allPoints, coords);
         coords = transform(coords);
 
         write(path, coords);
 
     }
-    
+
     public void write(String path, Coordinate[] coords) {
         DataStore store = factory.createNewDataStore(type, path, props);
         writer = store.getWriter();
@@ -212,17 +199,6 @@ public class Output {
             writer.add(record);
         }
         writer.close();
-    }
-
-    private Coordinate[] getCoords2(Collection<Coordinate> allPoints, Coordinate[] coords) {
-        int count = 0;
-        for (Coordinate point : allPoints) {
-            double x = point.getX();
-            double y = point.getY();
-            coords[count] = new CoordinateImpl(x, y);
-            count++;
-        }
-        return coords;
     }
 
     /**

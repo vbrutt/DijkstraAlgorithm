@@ -3,7 +3,7 @@ package de.heuboe.ausbildung.DijkstraAlgorithm;
 import java.util.*;
 import java.util.Map.*;
 
-import de.heuboe.ausbildung.DijkstraAlgorithm.Line;
+import javax.swing.event.*;
 
 public class Rarefaction {
     private Node startPoint;
@@ -12,6 +12,7 @@ public class Rarefaction {
     private double maxAbstand;
     private boolean biggerDistance = false;
     private Map<Node, Integer> ids = new HashMap<>();
+    private List<Line> finishedLines = new ArrayList<>(); // Linien, die ok sind
 
     public Rarefaction(Node startPoint, Node endPoint, List<Node> allPoints, double maxAbstand) {
         this.startPoint = startPoint;
@@ -46,20 +47,18 @@ public class Rarefaction {
      * 
      * @return all points between the start point and end point
      */
-    private static List<Node> getPointsFromLine(List<Node> allPoints, Node node1, Node node2) {
-        List<Node> newPoints = new ArrayList<>();
-        boolean check = false;
-        for (int i = 0; i < allPoints.size(); i++) {
-            if (allPoints.get(i) == node1 || allPoints.get(i) == node2 || check) {
-                newPoints.add(allPoints.get(i));
-                if (allPoints.get(i) == node2) {
-                    check = false;
-                } else {
-                    check = true;
+    private static Set<Node> getPointsFromLine(List<Node> allPoints) {
+        Set<Node> linePoints = new HashSet<>();
+
+        for (Node node : allPoints) {
+            for (String neighbourID : node.getNeighboursAndIntersections()) {
+                Node neighbour = Node.nodes.get(neighbourID);
+                if (allPoints.contains(neighbour)) {
+                    linePoints.add(neighbour);
                 }
             }
         }
-        return newPoints;
+        return linePoints;
     }
 
     /**
@@ -80,36 +79,20 @@ public class Rarefaction {
     /**
      * Runs the algorithm until all lines are smaller than the max distance
      * 
-     * @return a list with the rarefactionfactioned line
+     * @return a list with the rarefactioned line
      */
-    public List<Line> run() {
-        List<Node> linePoints;
-        List<Line> unfinishedLines = new ArrayList<>(); // Linien, die NICHT ok sind
-        List<Line> finishedLines = new ArrayList<>(); // Linien, die ok sind
+    public void run(int iStartPoint, int iEndPoint) {
+        biggerDistance = false;
+        Line line = setNewLine(allPoints.get(iStartPoint), allPoints.get(iEndPoint));
 
-        Line line = setNewLine(startPoint, endPoint);
-        firstCheck(line, unfinishedLines, finishedLines);
-
-        Line line1 = null;
-        Line line2 = null;
-
-        for (int i = 0; i < unfinishedLines.size(); i++) {
-            biggerDistance = false;
-            line = unfinishedLines.get(i);
-            linePoints = getPointsFromLine(allPoints, line.getStartPoint(), line.getEndPoint());
-            Map<Node, Double> distances = getDistances(linePoints, line);
-            Node extraPoint = getMaxDistance(distances);
-
-            line1 = setNewLine(line.getStartPoint(), extraPoint); // Erste Linie bauen
-            line2 = setNewLine(extraPoint, line.getEndPoint()); // Zweite Linie bauen
-            checkLines(unfinishedLines, finishedLines, line1, line2);
-            if (biggerDistance) {
-                run(); // Versuch Rekursion einzubauen
-            }
+        setDistances(line, allPoints.subList(iStartPoint, iEndPoint));
+        if (biggerDistance) {
+            int iExtraPoint = getMaxDistance(allPoints.subList(iStartPoint, iEndPoint));
+            run(iStartPoint, iExtraPoint);
+            run(iExtraPoint, iEndPoint);
+        } else {
+            finishedLines.add(line);
         }
-
-        Collections.sort(finishedLines, Line.getIdComparator());
-        return finishedLines;
     }
 
     /**
@@ -131,7 +114,7 @@ public class Rarefaction {
      *            list with lines, whose distance is smaller than the max distance
      */
     public void firstCheck(Line line, List<Line> unfinishedLines, List<Line> finishedLines) {
-        getDistances(allPoints, line);
+        setDistances(line, allPoints);
         if (!(biggerDistance)) {
             finishedLines.add(line);
             return;
@@ -172,20 +155,20 @@ public class Rarefaction {
      *            a list with all points from the graph
      * @param distances
      *            a map with a point as key and its distance as value
+     * @return
      * @return the point, which has the biggest distance
      */
-    private static Node getMaxDistance(Map<Node, Double> distances) {
+    private int getMaxDistance(List<Node> allPoints) {
         Double max = null;
-        Node maxPoint = null;
-        for (Entry<Node, Double> entry : distances.entrySet()) {
-            Node point = entry.getKey();
-            double distance = entry.getValue();
+        int maxPointIndex = 0;
+        for (Node node : allPoints) {
+            double distance = node.getDistance();
             if (max == null || distance > max) {
                 max = distance;
-                maxPoint = point;
+                maxPointIndex = allPoints.indexOf(node);
             }
         }
-        return maxPoint;
+        return maxPointIndex;
     }
 
     /**
@@ -195,17 +178,20 @@ public class Rarefaction {
      * @param distance
      *            distance value
      */
-    private void checkDistance(double distance) {
+    private boolean checkDistance(double distance, Line line) {
         if (distance > maxAbstand) {
             biggerDistance = true;
+            line.setBiggerDistance(true);
+            return true;
         }
+        return false;
     }
 
     /**
      * Calculates the distance between the line and the points inbetween. saves
      * those in a map
      * 
-     * @param points
+     * @param allPoints2
      *            list with all points of the graph
      * @param line
      *            line to be processed
@@ -213,13 +199,15 @@ public class Rarefaction {
      *            map with all distances
      * @return a map with a point as key and its distance as the value
      */
-    private Map<Node, Double> getDistances(List<Node> points, Line line) {
-        Map<Node, Double> distances = new HashMap<>();
-        for (Node node : points) {
+    private void setDistances(Line line, List<Node> allPoints) {
+        for (Node node : allPoints) {
             double distance = line.calculateDistance(node);
-            checkDistance(distance);
-            distances.put(node, distance);
+            checkDistance(distance, line);
+            node.setLineDistance(distance);
         }
-        return distances;
+    }
+
+    public List<Line> getFinishedLines() {
+        return finishedLines;
     }
 }

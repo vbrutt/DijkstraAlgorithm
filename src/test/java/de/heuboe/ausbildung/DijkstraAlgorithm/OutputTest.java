@@ -12,8 +12,6 @@ import org.opengis.referencing.*;
 import de.heuboe.ausbildung.netzpan.eingabe.Input;
 import de.heuboe.ausbildung.netzplan.interfaces.Net;
 import de.heuboe.ausbildung.netzplan.interfaces.Road;
-import de.heuboe.geo.*;
-import de.heuboe.geo.impl.*;
 
 public class OutputTest {
     @Test
@@ -151,16 +149,16 @@ public class OutputTest {
 
     @Test
     public void testVerdünnung() throws FactoryException {
-        Coordinate p1 = new CoordinateImpl(-3.0, -2.0);
-        Coordinate p2 = new CoordinateImpl(-3.0, 0.0);
-        Coordinate p3 = new CoordinateImpl(-2.0, 2.0);
-        Coordinate p4 = new CoordinateImpl(0.0, 3.0);
-        Coordinate p5 = new CoordinateImpl(2.0, 2.0);
-        Coordinate p6 = new CoordinateImpl(3.0, 0.0);
-        Coordinate p7 = new CoordinateImpl(3.0, -2.0);
+        Node p1 = new Node(-3.0, -2.0);
+        Node p2 = new Node(-3.0, 0.0);
+        Node p3 = new Node(-2.0, 2.0);
+        Node p4 = new Node(0.0, 3.0);
+        Node p5 = new Node(2.0, 2.0);
+        Node p6 = new Node(3.0, 0.0);
+        Node p7 = new Node(3.0, -2.0);
 
         // Die Liste ist sortiert
-        List<Coordinate> allPoints = new ArrayList<>();
+        List<Node> allPoints = new ArrayList<>();
         allPoints.add(p1);
         allPoints.add(p2);
         allPoints.add(p3);
@@ -169,31 +167,31 @@ public class OutputTest {
         allPoints.add(p6);
         allPoints.add(p7);
 
-        // Rarefaction rarefaction = new Rarefaction(p1, p7, allPoints, 9);
-        // List<Line> newLine = rarefaction.run();
+        Rarefaction rarefaction = new Rarefaction(p1, p7, allPoints, 9);
+        rarefaction.run(0, allPoints.size() - 1);
 
         Output output = new Output(31467, 31463);
 
-        // output.outputLine("./ShapeFiles/LineTEST1.shp", newLine);
+        output.outputLine("./ShapeFiles/LineTEST1.shp", rarefaction.getFinishedLines());
         output.outputPoints("./ShapeFiles/Points1.shp", allPoints);
     }
 
     @Test
     public void testVerdünnung2() throws FactoryException {
-        Coordinate p1 = new CoordinateImpl(-7.0, 2.0);
-        Coordinate p2 = new CoordinateImpl(-6.0, 4.0);
-        Coordinate p3 = new CoordinateImpl(-5.0, 5.0);
-        Coordinate p4 = new CoordinateImpl(-4.0, 5.0);
-        Coordinate p5 = new CoordinateImpl(-3.0, 3.0);
-        Coordinate p6 = new CoordinateImpl(-1.0, -1.0);
-        Coordinate p7 = new CoordinateImpl(0.0, -2.0);
-        Coordinate p8 = new CoordinateImpl(1.0, -1.0);
-        Coordinate p9 = new CoordinateImpl(2.0, 1.0);
-        Coordinate p10 = new CoordinateImpl(3.0, 2.0);
-        Coordinate p11 = new CoordinateImpl(8.0, 8.0);
+        Node p1 = new Node(-7.0, 2.0);
+        Node p2 = new Node(-6.0, 4.0);
+        Node p3 = new Node(-5.0, 5.0);
+        Node p4 = new Node(-4.0, 5.0);
+        Node p5 = new Node(-3.0, 3.0);
+        Node p6 = new Node(-1.0, -1.0);
+        Node p7 = new Node(0.0, -2.0);
+        Node p8 = new Node(1.0, -1.0);
+        Node p9 = new Node(2.0, 1.0);
+        Node p10 = new Node(3.0, 2.0);
+        Node p11 = new Node(8.0, 8.0);
 
         // Die Liste ist sortiert
-        List<Coordinate> allPoints = new ArrayList<>();
+        List<Node> allPoints = new ArrayList<>();
         allPoints.add(p1);
         allPoints.add(p2);
         allPoints.add(p3);
@@ -206,31 +204,31 @@ public class OutputTest {
         allPoints.add(p10);
         allPoints.add(p11);
 
-        // Rarefaction rarefaction = new Rarefaction(p1, p11, allPoints, 7);
-        // List<Line> line = rarefaction.run();
+        Rarefaction rarefaction = new Rarefaction(p1, p11, allPoints, 5);
+        rarefaction.run(0, allPoints.size() - 1);
 
         Output output = new Output(31467, 31463);
 
-        // output.outputLine("./ShapeFiles/LineTEST2.shp", line);
+        output.outputLine("./ShapeFiles/LineTEST2.shp", rarefaction.getFinishedLines());
         output.outputPoints("./ShapeFiles/Points2.shp", allPoints);
     }
 
     @Test
     public void testVerdünnung3() throws FactoryException {
-        Coordinate p1 = new CoordinateImpl(-3.0, 2.0);
-        Coordinate p2 = new CoordinateImpl(-2.0, -3.0);
-        Coordinate p3 = new CoordinateImpl(-1.0, 3.0);
-        Coordinate p4 = new CoordinateImpl(1.0, 2.0);
-        Coordinate p5 = new CoordinateImpl(4.0, 1.0);
-        Coordinate p6 = new CoordinateImpl(8.5, 3.0);
-        Coordinate p7 = new CoordinateImpl(11.0, 2.0);
-        Coordinate p8 = new CoordinateImpl(12.0, 2.0);
-        Coordinate p9 = new CoordinateImpl(13.0, 2.0);
-        Coordinate p10 = new CoordinateImpl(13.0, 2.0);
-        Coordinate p11 = new CoordinateImpl(13.0, 4.0);
+        Node p1 = new Node(-3.0, 2.0);
+        Node p2 = new Node(-2.0, -3.0);
+        Node p3 = new Node(-1.0, 3.0);
+        Node p4 = new Node(1.0, 2.0);
+        Node p5 = new Node(4.0, 1.0);
+        Node p6 = new Node(8.5, 3.0);
+        Node p7 = new Node(11.0, 2.0);
+        Node p8 = new Node(12.0, 2.0);
+        Node p9 = new Node(13.0, 2.0);
+        Node p10 = new Node(13.0, 2.0);
+        Node p11 = new Node(13.0, 4.0);
 
         // Die Liste ist sortiert
-        List<Coordinate> allPoints = new ArrayList<>();
+        List<Node> allPoints = new ArrayList<>();
         allPoints.add(p1);
         allPoints.add(p2);
         allPoints.add(p3);
@@ -243,26 +241,29 @@ public class OutputTest {
         allPoints.add(p10);
         allPoints.add(p11);
 
-        // Rarefaction rarefaction = new Rarefaction(p1, p11, allPoints, 4);
-        // List<Line> newLine = rarefaction.run();
+        Rarefaction rarefaction = new Rarefaction(p1, p11, allPoints, 4);
+        rarefaction.run(0, allPoints.size() - 1);
 
         Output output = new Output(31467, 31463);
-        // output.outputLine("./ShapeFiles/LineTEST3.shp", newLine);
+        output.outputLine("./ShapeFiles/LineTEST3.shp", rarefaction.getFinishedLines());
         output.outputPoints("./ShapeFiles/Points3.shp", allPoints);
     }
 
     @Test
     public void dijkstraUndVerduennung() throws IOException, FactoryException {
-        Way way = new Way(1, "10141", "11104"); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
+        Way way = new Way("10141", "11104", 1); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
         List<Node> path = new ArrayList<>();
 
         path = way.run();
 
         Output output = new Output(31463, 31467);
-        // output.outputDijkstra("./ShapeFiles/Dijkstra.shp", path);
+        output.outputDijkstra("./ShapeFiles/Dijkstra.shp", path);
 
-        Rarefaction r = new Rarefaction(path.get(0), path.get(path.size() - 1), path, 10000);
-        List<Line> line = r.run();
-        output.outputLine("./ShapeFiles/LineTEST3.shp", line);
+        Rarefaction r = new Rarefaction(path.get(0), path.get(path.size() - 1), path, 39999);
+        r.run(0, path.size() - 1);
+
+        output.outputLine("./ShapeFiles/LineTEST.shp", r.getFinishedLines());
+        System.out.println("Line size: " + r.getFinishedLines().size());
+        System.out.println("Path size: " + path.size());
     }
 }
