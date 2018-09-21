@@ -167,7 +167,7 @@ public class OutputTest {
         allPoints.add(p6);
         allPoints.add(p7);
 
-        Rarefaction rarefaction = new Rarefaction(p1, p7, allPoints, 9);
+        Recursion rarefaction = new Recursion(allPoints, 9);
         rarefaction.run(0, allPoints.size() - 1);
 
         Output output = new Output(31467, 31463);
@@ -204,7 +204,7 @@ public class OutputTest {
         allPoints.add(p10);
         allPoints.add(p11);
 
-        Rarefaction rarefaction = new Rarefaction(p1, p11, allPoints, 5);
+        Recursion rarefaction = new Recursion(allPoints, 5);
         rarefaction.run(0, allPoints.size() - 1);
 
         Output output = new Output(31467, 31463);
@@ -241,7 +241,7 @@ public class OutputTest {
         allPoints.add(p10);
         allPoints.add(p11);
 
-        Rarefaction rarefaction = new Rarefaction(p1, p11, allPoints, 4);
+        Recursion rarefaction = new Recursion(allPoints, 4);
         rarefaction.run(0, allPoints.size() - 1);
 
         Output output = new Output(31467, 31463);
@@ -259,11 +259,12 @@ public class OutputTest {
         Output output = new Output(31463, 31467);
         output.outputDijkstra("./ShapeFiles/Dijkstra.shp", path);
 
-        Rarefaction r = new Rarefaction(path.get(0), path.get(path.size() - 1), path, 39999);
-        r.run(0, path.size() - 1);
+        // Recursion r = new Recursion(path, 39999);
+        Iteration r = new Iteration(path, 1000);
+        List<Line> line = r.run();
 
-        output.outputLine("./ShapeFiles/LineTEST.shp", r.getFinishedLines());
-        System.out.println("Line size: " + r.getFinishedLines().size());
+        output.outputLine("./ShapeFiles/LineTEST.shp", line);
+        System.out.println("Line size: " + line.size());
         System.out.println("Path size: " + path.size());
     }
 }
