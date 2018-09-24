@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="47.52" tests="12" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="945.11" tests="12" errors="2" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files (x86)\Java\jdk1.8.0_65\jre\bin"/>
@@ -62,16 +62,23 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
   </properties>
-  <testcase name="outputLCL" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="3.716"/>
-  <testcase name="testVerdünnung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="0.062"/>
-  <testcase name="inputUnfiltriert" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="4.524"/>
-  <testcase name="inputUnfiltriertOhneOptimierung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="4.524"/>
-  <testcase name="hinUndZurueck" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="4.605"/>
-  <testcase name="dijkstraOhneOptimierung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="3.261"/>
-  <testcase name="dijkstraOptimiert" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="2.527"/>
-  <testcase name="testVerdünnung2" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="0.062"/>
-  <testcase name="testVerdünnung3" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="0.047"/>
-  <testcase name="dijkstraUndVerduennung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="3.853"/>
-  <testcase name="keineVerbindung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="2.777"/>
-  <testcase name="outputDijkstra" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="17.453"/>
+  <testcase name="outputLCL" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="3.838"/>
+  <testcase name="testVerdünnung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="0.156"/>
+  <testcase name="inputUnfiltriert" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="4.727"/>
+  <testcase name="inputUnfiltriertOhneOptimierung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="4.091"/>
+  <testcase name="hinUndZurueck" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="5.195"/>
+  <testcase name="dijkstraOhneOptimierung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="3.463"/>
+  <testcase name="dijkstraOptimiert" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="3.106"/>
+  <testcase name="testVerdünnung2" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="0.078"/>
+  <testcase name="testVerdünnung3" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="0.078">
+    <error type="java.lang.StackOverflowError">java.lang.StackOverflowError
+</error>
+  </testcase>
+  <testcase name="dijkstraUndVerduennung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="899.82">
+    <error message="Java heap space" type="java.lang.OutOfMemoryError">java.lang.OutOfMemoryError: Java heap space
+	at de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest.dijkstraUndVerduennung(OutputTest.java:264)
+</error>
+  </testcase>
+  <testcase name="keineVerbindung" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="2.444"/>
+  <testcase name="outputDijkstra" classname="de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest" time="18.021"/>
 </testsuite>

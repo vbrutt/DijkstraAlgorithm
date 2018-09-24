@@ -1,4 +1,11 @@
 -------------------------------------------------------------------------------
 Test set: de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest
 -------------------------------------------------------------------------------
-Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 47.52 sec - in de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest
+Tests run: 12, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 945.11 sec <<< FAILURE! - in de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest
+testVerdünnung3(de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest)  Time elapsed: 0.078 sec  <<< ERROR!
+java.lang.StackOverflowError
+
+dijkstraUndVerduennung(de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest)  Time elapsed: 899.82 sec  <<< ERROR!
+java.lang.OutOfMemoryError: Java heap space
+	at de.heuboe.ausbildung.DijkstraAlgorithm.OutputTest.dijkstraUndVerduennung(OutputTest.java:264)
+

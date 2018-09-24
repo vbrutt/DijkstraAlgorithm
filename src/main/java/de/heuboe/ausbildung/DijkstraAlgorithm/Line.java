@@ -11,6 +11,7 @@ public class Line {
     private Node startPoint;
     private Node endPoint;
     private Gerade gerade;
+    private boolean biggerDistance;
 
     public Line(int id, Node p1, Node p2) {
         this.setStartPoint(p1);
@@ -87,5 +88,13 @@ public class Line {
 
     static Comparator<Line> getIdComparator() {
         return new IdComparator();
+    }
+
+    public boolean isBiggerDistance() {
+        return biggerDistance;
+    }
+
+    public void setBiggerDistance(boolean biggerDistance) {
+        this.biggerDistance = biggerDistance;
     }
 }

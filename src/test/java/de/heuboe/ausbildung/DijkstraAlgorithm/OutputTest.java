@@ -259,12 +259,12 @@ public class OutputTest {
         Output output = new Output(31463, 31467);
         output.outputDijkstra("./ShapeFiles/Dijkstra.shp", path);
 
-        // Recursion r = new Recursion(path, 39999);
-        Iteration r = new Iteration(path, 1000);
-        List<Line> line = r.run();
+        Recursion r = new Recursion(path, 49999);
+        // Iteration r = new Iteration(path, 10000);
+        /* List<Line> line = */r.run(0, path.size() - 1);
 
-        output.outputLine("./ShapeFiles/LineTEST.shp", line);
-        System.out.println("Line size: " + line.size());
+        output.outputLine("./ShapeFiles/LineTEST.shp", r.getFinishedLines());
+        // System.out.println("Line size: " + line.size());
         System.out.println("Path size: " + path.size());
     }
 }
