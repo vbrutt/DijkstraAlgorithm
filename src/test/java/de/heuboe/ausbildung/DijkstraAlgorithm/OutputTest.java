@@ -250,7 +250,7 @@ public class OutputTest {
     }
 
     @Test
-    public void dijkstraUndVerduennung() throws IOException, FactoryException {
+    public void dijkstraUndVerduennungRecursion() throws IOException, FactoryException {
         Way way = new Way("10141", "11104", 1); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
         List<Node> path = new ArrayList<>();
 
@@ -259,12 +259,29 @@ public class OutputTest {
         Output output = new Output(31463, 31467);
         output.outputDijkstra("./ShapeFiles/Dijkstra.shp", path);
 
-        Recursion r = new Recursion(path, 49999);
-        // Iteration r = new Iteration(path, 10000);
-        /* List<Line> line = */r.run(0, path.size() - 1);
+        Recursion r = new Recursion(path, 40000);
+        r.run(0, path.size() - 1);
 
-        output.outputLine("./ShapeFiles/LineTEST.shp", r.getFinishedLines());
-        // System.out.println("Line size: " + line.size());
+        output.outputLine("./ShapeFiles/LineTESTRecursion.shp", r.getFinishedLines());
+        System.out.println("Line size: " + r.getFinishedLines().size());
+        System.out.println("Path size: " + path.size());
+    }
+
+    @Test
+    public void dijkstraUndVerduennungIteration() throws IOException, FactoryException {
+        Way way = new Way("10141", "11104", 1); // 11104 Aachen // 10141 Hamburg // 12903 München-Ost // 11769 Köln //
+        List<Node> path = new ArrayList<>();
+
+        path = way.run();
+
+        Output output = new Output(31463, 31467);
+        output.outputDijkstra("./ShapeFiles/Dijkstra.shp", path);
+
+        Iteration i = new Iteration(path, 40000);
+        List<Line> line = i.run();
+
+        output.outputLine("./ShapeFiles/LineTESTIteration.shp", line);
+        System.out.println("Line size: " + line.size());
         System.out.println("Path size: " + path.size());
     }
 }
